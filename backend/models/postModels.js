@@ -28,7 +28,7 @@ const postSchema=new mongoose.Schema({
     createdAt:{
         type:String,
         required:true,
-        default:new Date(Date.now().toLocaleString())
+        default:new Date(Date.now()).toLocaleString()
     }
 });
 

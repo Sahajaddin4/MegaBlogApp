@@ -1,8 +1,10 @@
 //All import here
 const express=require('express');
 const app=express();
+
 const blogRoutes=require('./routes/blogRoutes');
 const likeRoutes=require('./routes/likeRoutes');
+
 //env configaration done
 require('dotenv').config();
 const dbConnect=require('./config/db');
