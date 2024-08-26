@@ -18,7 +18,8 @@ app.use('/blog/api',blogRoutes);
 //Routes mapping for likes
 app.use('/blog/api/like-dislike',likeRoutes);
 // Routes mapping for comments
-app.use('/blog/api/add-comment', commentRoutes);
+app.use('/blog/api/comment', commentRoutes);
+// Route to delete comment
 //Default route
 app.get('/',(_,res)=>{
     res.send(`<h1>This is homepage</h1>`);

@@ -36,15 +36,9 @@ exports.likePost = async (req, res) => {
 
 exports.disLikePost = async (req, res) => {
     try {
-        const {postId,author} = req.body;
+        const {postId,likeId} = req.body;
 
-        const removeLike=await Like.findOneAndDelete({author:author});
-        if(!removeLike){
-          
-        return res.status(400).json({
-            message: "No data found for the author",
-        })
-        }
+        const removeLike=await Like.findOneAndDelete(likeId);
 
         //update like data  in post collection
         const updatedPost = await Post.findByIdAndUpdate(postId, { $pull: { likes: removeLike._id } }, { new: true })

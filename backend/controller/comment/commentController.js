@@ -30,6 +30,24 @@ exports.commentPost =async(req, res)=>{
     }
 }
 
-// exports.removeComment=asyn(req, res)=>{
+exports.removeComment=async(req, res)=>{
+    try{
+        const {commentId, postId} = req.body;
 
-// }
+        const remComment = await Comment.findByIdAndDelete(commentId);
+
+        const updatedPost = await Post.findByIdAndUpdate(postId,{$pull: {comments: remComment._id}}, {new: true})
+        .populate('comments').exec();
+        
+        res.status(200).json({
+            message: "Commment Deleted Successfully",
+            data: updatedPost
+        })
+    }
+    catch(error){
+        console.log(error.message)
+        return res.status(500).json({
+            message: "Remove Comment Try error Occured in Comment"
+        })
+    }
+}
