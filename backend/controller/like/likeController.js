@@ -47,9 +47,11 @@ exports.disLikePost = async (req, res) => {
         }
 
         //update like data  in post collection
-        const updatedPost = await Post.findByIdAndUpdate(postId, { $pull: { likes: removeLike._id } });
+        const updatedPost = await Post.findByIdAndUpdate(postId, { $pull: { likes: removeLike._id } }, { new: true })
+            .populate("likes").exec();
+
         
-            res.status(200).json({
+            return res.status(200).json({
             message: "post disliked succesfully",
             data:updatedPost
         })

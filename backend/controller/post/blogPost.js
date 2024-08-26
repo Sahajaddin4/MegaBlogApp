@@ -7,7 +7,7 @@ exports.createPost = async (req, res) => {
         
         
         const addPost = await Post.create({ title, body, author });
-         res.status(200).json({
+        return res.status(200).json({
             message:'Post added succesfully',
         })
     } catch (error) {
@@ -27,7 +27,7 @@ exports.createPost = async (req, res) => {
 exports.getAllPosts=async(_,res)=>{
     try {
         const posts = await Post.find({});
-        res.status(200).json({
+        return res.status(200).json({
             message:'Post fetched  succesfully',
             data:posts
         })
