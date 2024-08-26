@@ -1,5 +1,6 @@
 const Like = require('../../models/likeModels');
 const Post = require('../../models/postModels');
+
 exports.likePost = async (req, res) => {
     try {
         const { postId ,author } = req.body;
@@ -42,7 +43,6 @@ exports.disLikePost = async (req, res) => {
           
         return res.status(400).json({
             message: "No data found for the author",
-           
         })
         }
 

@@ -5,8 +5,6 @@ const { likePost, disLikePost } = require('../controller/like/likeController');
 const router=require('express').Router();
 
 
-
-
 //Routes handleing
 router.post('/post-like',likePost);
 
