@@ -4,6 +4,7 @@ const app=express();
 const blogRoutes=require('./routes/blogRoutes');
 const likeRoutes=require('./routes/likeRoutes');
 const commentRoutes = require('./routes/commentRoutes');
+const userRoute = require('./routes/userRoute');
 //env configaration done
 require('dotenv').config();
 const dbConnect=require('./config/db');
@@ -20,6 +21,10 @@ app.use('/blog/api/like-dislike',likeRoutes);
 // Routes mapping for comments
 app.use('/blog/api/comment', commentRoutes);
 // Route to delete comment
+
+// Route for user
+app.use('/blog/api/user', userRoute)
+
 //Default route
 app.get('/',(_,res)=>{
     res.send(`<h1>This is homepage</h1>`);
