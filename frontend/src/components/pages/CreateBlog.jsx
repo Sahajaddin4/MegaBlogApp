@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+
 function CreateBlog() {
 
   const [blogData,setBlogData]=useState({
@@ -17,6 +17,10 @@ function CreateBlog() {
       }
      })
   }
+ 
+  //data send to database function
+  
+
   return (
     <div className="login w-[30em] mt-20 h-[20em] mx-auto rounded-lg shadow-2xl border px-4 py-2 m-2">
       <div className="heading text-center mb-5">

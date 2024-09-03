@@ -2,14 +2,16 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import eye from "../../../assets/eye.png";
 import crossEye from "../../../assets/crossEye.png";
+import { toast } from "react-toastify";
+import axios from "axios";
 
 function SignUp() {
   const [passwordType, setPasswordType] = useState("password");
   const [cPasswordType, setCpasswordType] = useState("password");
   const [userData, setUserData] = useState({
+    name:"",
     email: "",
     password: "",
-    username:"",
     confirmPassword:""
   });
 
@@ -35,6 +37,19 @@ function SignUp() {
     }));
   }
 
+  //data send to database function
+const createAccount=async (e)=>{
+    e.preventDefault();
+    if(userData.password!==userData.confirmPassword)
+    {
+        toast.error('Password not matched!');
+    }
+    else{
+       let res=await axios.post('/api',userData);
+    }
+    
+}
+
   return (
     <div className="signup w-[30em] mt-20 h-[20em] mx-auto rounded-lg shadow-2xl border px-4 py-2 m-2">
       <div className="heading text-center mb-5">
@@ -48,10 +63,10 @@ function SignUp() {
           <label htmlFor="username">UserName:</label>
             <input
               type="text"
-              name="author"
+              name="name"
               id="username"
               onChange={handleChange}
-              value={userData.username}
+              value={userData.name}
               className="border-2  hover:border-blue-400 py-2 rounded w-full"
             />
           </div>
@@ -78,6 +93,7 @@ function SignUp() {
                 name="password"
                 id="password"
                 value={userData.password}
+                onChange={handleChange}
                 className="w-full border-none outline-none pr-10"
               />
 
@@ -111,6 +127,7 @@ function SignUp() {
                 type={cPasswordType}
                 name="confirmPassword"
                 id="confirmPassword"
+                onChange={handleChange}
                 value={userData.confirmPassword}
                 className="w-full border-none outline-none pr-10"
               />
@@ -141,6 +158,7 @@ function SignUp() {
             <button
               type="submit"
               className="py-2 px-4 rounded w-[60%] mx-auto bg-blue-600 text-white"
+              onClick={createAccount}
             >
               Create
             </button>
