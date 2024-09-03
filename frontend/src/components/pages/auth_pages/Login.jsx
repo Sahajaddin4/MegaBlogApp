@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import eye from '../../../assets/eye.png';
 import crossEye from '../../../assets/crossEye.png';
 import { Link } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import axios from 'axios';
 function Login() {
   const [passwordType, setPasswordType] = useState('password');
   const [userData, setUserData] = useState({
@@ -23,6 +25,21 @@ function Login() {
       ...prevData,
       [name]: value
     }));
+  }
+
+  const login =async(e)=>{
+    try{
+      e.preventDefault();
+
+      let res=await axios.post('/api/blog/api/user/login',userData);
+        console.log(res);
+        
+       toast.success(res.data.message);
+      }
+    catch(e){
+      console.log(e);
+        toast.error('Failed to login account!');
+    }
   }
 
   return (
@@ -56,6 +73,7 @@ function Login() {
                 type={passwordType}
                 name="password"
                 id="password"
+                onChange={handleChange}
                 value={userData.password}
                 className="w-full border-none outline-none pr-10"
               />
@@ -84,6 +102,7 @@ function Login() {
           {/* Submit button */}
           <div className="btn text-center mt-5">
             <button
+            onClick={login}
               type="submit"
               className="py-2 px-4 rounded w-[60%] mx-auto bg-blue-600 text-white"
             >
