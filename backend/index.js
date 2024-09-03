@@ -1,6 +1,7 @@
 //All import here
 const express=require('express');
 const app=express();
+const cors=require('cors');
 const blogRoutes=require('./routes/blogRoutes');
 const likeRoutes=require('./routes/likeRoutes');
 const commentRoutes = require('./routes/commentRoutes');
@@ -14,6 +15,7 @@ dbConnect();
 
 //Parsing json data  middleware
 app.use(express.json());
+app.use(cors());
 //Routes mapping for blog
 app.use('/blog/api',blogRoutes);
 //Routes mapping for likes

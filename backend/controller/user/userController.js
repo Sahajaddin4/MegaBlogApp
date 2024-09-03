@@ -2,7 +2,7 @@ const User = require("../../models/userModel");
 
 exports.userSignup = async(req,res)=>{
     try{
-        const {name, email, password, confirmpassword} = req.body;
+        const {name, email, password, confirmPassword} = req.body;
         
         // Validation
 
@@ -10,7 +10,7 @@ exports.userSignup = async(req,res)=>{
             name,
             email,
             password,
-            confirmpassword
+            confirmPassword
         })
 
         let response = await userData.save();
