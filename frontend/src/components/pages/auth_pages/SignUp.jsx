@@ -4,7 +4,7 @@ import eye from "../../../assets/eye.png";
 import crossEye from "../../../assets/crossEye.png";
 import { toast } from "react-toastify";
 import axios from "axios";
-
+import isEmail from 'validator/lib/isEmail';
 function SignUp() {
   const [passwordType, setPasswordType] = useState("password");
   const [cPasswordType, setCpasswordType] = useState("password");
@@ -40,23 +40,32 @@ function SignUp() {
   //data send to database function
 const createAccount=async (e)=>{
     e.preventDefault();
-    if(userData.password!==userData.confirmPassword)
+    if(userData.email==="" || userData.name==="" || userData.password==="" || userData.confirmPassword===""){
+      toast.error('Please fill all details!');
+    }
+    else if( userData.password!==userData.confirmPassword)
     {
         toast.error('Password not matched!');
     }
     else{
-       try {
-        let res=await axios.post('/api/blog/api/user/signup',userData);
-        console.log(res);
+      if(isEmail(userData.email)){
+
+        try {
+         let res=await axios.post('/api/blog/api/user/signup',userData);
+         console.log(res);
+         
+        toast.success(res.data.message);
+        } catch (error) {
+         console.log(error);
+         toast.error('Failed to create account!');
+        }
         
-       toast.success(res.data.message);
-       } catch (error) {
-        console.log(error);
-        toast.error('Failed to create account!');
-       }
-       
-    }
-    
+     }
+     else{
+      toast.error("Please follow email format..")
+     }
+     
+      }
 }
 
   return (
