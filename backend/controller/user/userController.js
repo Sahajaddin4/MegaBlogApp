@@ -1,5 +1,8 @@
 const  bcrypt  = require("bcrypt");
 const User = require("../../models/userModel");
+const jwt = require('jsonwebtoken')
+require("dotenv").config();
+
 
 exports.userSignup = async(req,res)=>{
     try{
@@ -70,12 +73,33 @@ exports.userLogin=async(req,res)=>{
        
         const isPasswordMatched = await bcrypt.compare(password,user.password)
 
+
         if(isPasswordMatched){
-            return res.status(200).json({
-                success:true,
-                user:user.name,
-                message:"Login successful..."
-            })
+            const payload = {
+                email:user.email,
+                id: user._id,
+                isAuth: true,
+                name: user.name
+            }
+
+            const token = jwt.sign(payload, process.env.JWT_SECRET_KEY, { expiresIn: "2h" })
+
+            const options = {
+                expires : new Date(Date.now() + 3 * 60 *1000),
+                httpOnly: true
+            }
+
+            res.cookie("token", token, options).status(200).json({
+                    success:true,
+                    user:user.name,
+                    message:"Login successful..."
+                })
+            // return res.status(200).json({
+            //     success:true,
+            //     user:user.name,
+            //     token: token,
+            //     message:"Login successful..."
+            // })
         }
         else{
             return res.status(400).json({

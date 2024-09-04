@@ -6,6 +6,8 @@ const blogRoutes=require('./routes/blogRoutes');
 const likeRoutes=require('./routes/likeRoutes');
 const commentRoutes = require('./routes/commentRoutes');
 const userRoute = require('./routes/userRoute');
+
+const cookie = require("cookie-parser")
 //env configaration done
 require('dotenv').config();
 const dbConnect=require('./config/db');
@@ -15,6 +17,7 @@ dbConnect();
 
 //Parsing json data  middleware
 app.use(express.json());
+app.use(cookie())
 app.use(cors());
 //Routes mapping for blog
 app.use('/blog/api',blogRoutes);
