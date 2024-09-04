@@ -66,10 +66,16 @@ const createAccount=async (e)=>{
      }
      
       }
+      setUserData({
+        name:"",
+        email: "",
+        password: "",
+        confirmPassword:""
+      })
 }
 
   return (
-    <div className="signup w-[30em] mt-20 h-[20em] mx-auto rounded-lg shadow-2xl border px-4 py-2 m-2">
+    <div className="signup w-[30em] mt-20 mx-auto rounded-lg shadow-md border px-6 py-2 m-2">
       <div className="heading text-center mb-5">
         <h1 className="text-2xl font-bold">Create Account</h1>
       </div>
@@ -77,7 +83,7 @@ const createAccount=async (e)=>{
         <form className="flex flex-col gap-5">
 
           {/* username */}
-          <div className="username flex gap-2 items-center">
+          <div className="username flex flex-col gap-2 justify-start ">
           <label htmlFor="username">UserName:</label>
             <input
               type="text"
@@ -85,24 +91,26 @@ const createAccount=async (e)=>{
               id="username"
               onChange={handleChange}
               value={userData.name}
+              required 
               className="border-2  hover:border-blue-400 py-2 rounded w-full"
             />
           </div>
           {/* Email input field */}
-          <div className="email flex gap-2 items-center">
+          <div className="email flex flex-col gap-2 justify-start">
             <label htmlFor="email">Email:</label>
             <input
               type="text"
               name="email"
               id="email"
+              required 
               value={userData.email}
               onChange={handleChange}
-              className="border-2 ml-7 hover:border-blue-400 py-2 rounded w-full"
+              className="border-2  hover:border-blue-400 py-2 rounded w-full"
             />
           </div>
 
           {/* Password input field with toggle icon */}
-          <div className="password flex gap-2 items-center">
+          <div className="password flex flex-col gap-2 justify-start">
             <label htmlFor="password">Password:</label>
             <div className="relative border-2 hover:border-blue-400 py-2 rounded w-full">
               {/* Password input field */}
@@ -110,6 +118,7 @@ const createAccount=async (e)=>{
                 type={passwordType}
                 name="password"
                 id="password"
+                required 
                 value={userData.password}
                 onChange={handleChange}
                 className="w-full border-none outline-none pr-10"
@@ -137,7 +146,7 @@ const createAccount=async (e)=>{
           </div>
 
           {/* Confirm Password input field with toggle icon */}
-          <div className="confirmPassword flex gap-2 items-center">
+          <div className="confirmPassword flex flex-col gap-2 justify-start">
             <label htmlFor="confirmPassword">Confirm Password:</label>
             <div className="relative border-2 hover:border-blue-400 py-2 rounded w-full">
               {/*confirm  Password input field */}
@@ -145,6 +154,7 @@ const createAccount=async (e)=>{
                 type={cPasswordType}
                 name="confirmPassword"
                 id="confirmPassword"
+                required 
                 onChange={handleChange}
                 value={userData.confirmPassword}
                 className="w-full border-none outline-none pr-10"

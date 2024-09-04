@@ -1,16 +1,19 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import eye from '../../../assets/eye.png';
 import crossEye from '../../../assets/crossEye.png';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import axios from 'axios';
+import Cookies from 'js-cookie';
+import { UserContext } from '../../../contextApi/userAuthContext';
 function Login() {
   const [passwordType, setPasswordType] = useState('password');
   const [userData, setUserData] = useState({
     email: '',
     password: ''
   });
-
+  const navigate=useNavigate();
+    const {setIsAuthencticated,setUser,user}=useContext(UserContext);
   // Function to toggle password visibility
   function togglePasswordVisibility() {
     setPasswordType(prevType => {
@@ -32,13 +35,25 @@ function Login() {
       e.preventDefault();
 
       let res=await axios.post('/api/blog/api/user/login',userData);
-        console.log(res);
+      //  Cookies.set("token",res.data.token);
+       
+        setIsAuthencticated(Cookies.get('token'));
+        setUser(res.data.user);
+       console.log(Cookies.get('token'));
+        
         
        toast.success(res.data.message);
+       navigate('/');
       }
     catch(e){
       console.log(e);
         toast.error('Failed to login account!');
+    }
+    finally{
+      setUserData({
+         email: '',
+    password: ''
+      })
     }
   }
 

@@ -1,14 +1,18 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { NavLink } from "react-router-dom";
 import './Navbar.css';
 import appLogo from "../../../assets/appLogo.jpeg";
+import { UserContext } from "../../../contextApi/userAuthContext";
+import { toast } from "react-toastify";
 function Navbar() {
 
-  const [isLoggedIn,setIsLoggedIn]=useState(true);
+  const{isAuthenticated,user,setIsAuthencticated}=useContext(UserContext);
+ 
 
   //handle logout
   function handleLogout(){
-    setIsLoggedIn(false);
+    setIsAuthencticated(false);
+    toast.warning('Logout successfull');
   }
   return (
     <div className="navbar">
@@ -35,7 +39,7 @@ function Navbar() {
             </NavLink>
           </div>
           {
-            isLoggedIn?
+            isAuthenticated?
             ( 
               
               <div className="logout-profile flex gap-5">
