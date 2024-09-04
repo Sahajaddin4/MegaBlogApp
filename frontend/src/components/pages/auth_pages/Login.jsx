@@ -35,7 +35,7 @@ function Login() {
       e.preventDefault();
 
       let res=await axios.post('/api/blog/api/user/login',userData);
-    
+     
        
         setIsAuthencticated(Cookies.get('token'));
         setUser(res.data.user);

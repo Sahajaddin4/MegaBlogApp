@@ -37,11 +37,18 @@ function CreateBlog() {
     e.preventDefault();
     // Implement data submission logic here
       try {
-         let res=await axios.post('/api/blog/api/create-blog',blogData);
-         console.log(res);
+         let res=await axios.post('/api/blog/api/create-post',blogData);
+         toast.success(res.data.message);
+        navigate('/');
          
       } catch (error) {
         toast.error('Failed to create post!');
+      }
+      finally{
+        setBlogData({
+          title: "",
+          body: "",
+        })
       }
     // Example: Logs the blog data to the console
   }

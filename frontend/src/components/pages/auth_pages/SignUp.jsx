@@ -52,7 +52,7 @@ const createAccount=async (e)=>{
 
         try {
          let res=await axios.post('/api/blog/api/user/signup',userData);
-         console.log(res);
+        
          
         toast.success(res.data.message);
         } catch (error) {
