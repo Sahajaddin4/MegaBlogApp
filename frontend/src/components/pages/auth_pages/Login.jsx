@@ -35,12 +35,11 @@ function Login() {
       e.preventDefault();
 
       let res=await axios.post('/api/blog/api/user/login',userData);
-      //  Cookies.set("token",res.data.token);
+    
        
         setIsAuthencticated(Cookies.get('token'));
         setUser(res.data.user);
-       console.log(Cookies.get('token'));
-        
+      
         
        toast.success(res.data.message);
        navigate('/');

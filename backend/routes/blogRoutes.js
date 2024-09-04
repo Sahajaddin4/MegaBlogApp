@@ -1,4 +1,5 @@
 const { createPost, getAllPosts, deletePost } = require('../controller/post/blogPost');
+const auth = require('../middleware/auth');
 
 //import 
 const router=require('express').Router();
@@ -10,13 +11,13 @@ const router=require('express').Router();
 router.get('/get-all-posts',getAllPosts);
 
 //Post routes
-router.post('/create-post',createPost);
+router.post('/create-post',auth, createPost);
 
 //Put routes
 
 
 //Delete Routes
-router.delete('/delete-post/:postId',deletePost);
+router.delete('/delete-post/:postId',auth,deletePost);
 
 
 

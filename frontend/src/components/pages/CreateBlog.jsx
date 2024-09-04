@@ -1,7 +1,22 @@
-import React, { useState } from "react";
-
+import React, { useContext, useEffect, useState } from "react";
+import { UserContext } from "../../contextApi/userAuthContext";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { toast } from "react-toastify";
 function CreateBlog() {
   // State to manage blog data
+  const{isAuthenticated}=useContext(UserContext);
+  const navigate=useNavigate();
+  useEffect(()=>{
+    if(!isAuthenticated)
+      {
+        
+          navigate('/user/login');
+      }
+   
+     
+  },[isAuthenticated]);
+
   const [blogData, setBlogData] = useState({
     title: "",
     body: "",
@@ -18,10 +33,17 @@ function CreateBlog() {
   }
 
   // Function to handle form submission (e.g., sending data to the database)
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
     // Implement data submission logic here
-    console.log(blogData); // Example: Logs the blog data to the console
+      try {
+         let res=await axios.post('/api/blog/api/create-blog',blogData);
+         console.log(res);
+         
+      } catch (error) {
+        toast.error('Failed to create post!');
+      }
+    // Example: Logs the blog data to the console
   }
 
   return (

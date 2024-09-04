@@ -4,6 +4,7 @@ import './Navbar.css';
 import appLogo from "../../../assets/appLogo.jpeg";
 import { UserContext } from "../../../contextApi/userAuthContext";
 import { toast } from "react-toastify";
+import Cookies from 'js-cookie';
 function Navbar() {
 
   const{isAuthenticated,user,setIsAuthencticated}=useContext(UserContext);
@@ -11,7 +12,8 @@ function Navbar() {
 
   //handle logout
   function handleLogout(){
-    setIsAuthencticated(false);
+    setIsAuthencticated('');
+    Cookies.remove('token');
     toast.warning('Logout successfull');
   }
   return (
