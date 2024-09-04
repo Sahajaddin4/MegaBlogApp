@@ -1,22 +1,23 @@
+const { decrypt } = require("dotenv");
 const User = require("../../models/userModel");
 
 exports.userSignup = async(req,res)=>{
     try{
-        const {name, email, password, confirmPassword} = req.body;
+        const {name, email, password} = req.body;
         
         // Validation
-        let user=User.find({email});
+        let user = User.find({email});
         if(user){
            return res.status(400).json({
                 success:true,
                 message:"Email already exists"
             })
         }
+        const hashPassword = await bcrypt.hash(password, 10);
         let userData = new User ({
             name,
             email,
-            password,
-            confirmPassword
+            password: hashPassword
         })
 
         let response = await userData.save();
@@ -51,24 +52,30 @@ exports.userLogin=async(req,res)=>{
         
         // Validation
 
+
+        let user=User.find({email});
+        if(!user){
+            return res.status(400).json({
+                success:false,
+                message: "User does not exist"
+            })
+        }
        
+        password = await bcrypt.compare(password,user.password)
 
-        let response = await User.find({
-            email,
-            password
-        });
-
-        if(response){
+        if(password){
             return res.status(200).json({
                 success:true,
                 data: response.data,
                 message:"Login successful..."
             })
         }
-        return res.status(400).json({
-            success:true,
-            message:"data not found .. create account first"
-        })
+        else{
+            return res.status(400).json({
+                success:true,
+                message:"Password Does not match"
+            })
+        }
 
     }
     catch{
