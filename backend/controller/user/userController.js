@@ -1,12 +1,13 @@
-const { decrypt } = require("dotenv");
+const  bcrypt  = require("bcrypt");
 const User = require("../../models/userModel");
 
 exports.userSignup = async(req,res)=>{
     try{
         const {name, email, password} = req.body;
+      
         
         // Validation
-        let user = User.find({email});
+        let user =await User.findOne({email});
         if(user){
            return res.status(400).json({
                 success:true,
@@ -14,15 +15,18 @@ exports.userSignup = async(req,res)=>{
             })
         }
         const hashPassword = await bcrypt.hash(password, 10);
+       
+       
         let userData = new User ({
             name,
             email,
-            password: hashPassword
+            password:hashPassword
         })
-
+      
+        
         let response = await userData.save();
 
-        if(response){
+         if(response){
             return res.status(200).json({
                 success:true,
                 data: response.data,
@@ -35,9 +39,12 @@ exports.userSignup = async(req,res)=>{
         })
 
     }
-    catch{
+    catch(error){
+        //console.log(error);
+        
         return res.status(500).json({
-            success:true,
+            success:false,
+            error:error,
             message:"Server Error"
         })
     }
@@ -53,7 +60,7 @@ exports.userLogin=async(req,res)=>{
         // Validation
 
 
-        let user=User.find({email});
+        let user=await User.findOne({email});
         if(!user){
             return res.status(400).json({
                 success:false,
@@ -61,26 +68,29 @@ exports.userLogin=async(req,res)=>{
             })
         }
        
-        password = await bcrypt.compare(password,user.password)
+        const isPasswordMatched = await bcrypt.compare(password,user.password)
 
-        if(password){
+        if(isPasswordMatched){
             return res.status(200).json({
                 success:true,
-                data: response.data,
+                user:user.name,
                 message:"Login successful..."
             })
         }
         else{
             return res.status(400).json({
-                success:true,
+                success:false,
                 message:"Password Does not match"
             })
         }
 
     }
-    catch{
+    catch(e){
+        console.log(e);
+        
         return res.status(500).json({
             success:false,
+            error:e,
             message:"Server Error"
         })
     }
