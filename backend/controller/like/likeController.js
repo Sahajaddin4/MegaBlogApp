@@ -1,10 +1,10 @@
 const Like = require('../../models/likeModels');
 const Post = require('../../models/postModels');
-
+const mongoose=require('mongoose');
 exports.likePost = async (req, res) => {
     try {
         const { postId ,author } = req.body;
-
+      
         const addLike = new Like({
             post: postId,
             author
@@ -36,18 +36,21 @@ exports.likePost = async (req, res) => {
 
 exports.disLikePost = async (req, res) => {
     try {
-        const {postId,likeId} = req.body;
+        const {postId,author} = req.body;
+        
+        let likeId=await Like.find({$and:[{post:postId,author:author}]});
+      
+        
+       const removeLike=await Like.findOneAndDelete(likeId);
 
-        const removeLike=await Like.findOneAndDelete(likeId);
-
-        //update like data  in post collection
+       // update like data  in post collection
         const updatedPost = await Post.findByIdAndUpdate(postId, { $pull: { likes: removeLike._id } }, { new: true })
             .populate("likes").exec();
 
         
-            return res.status(200).json({
+            return res.status(200).json({ 
             message: "post disliked succesfully",
-            data:updatedPost
+           
         })
 
     } catch (error) {
@@ -56,7 +59,7 @@ exports.disLikePost = async (req, res) => {
         return res.status(500).json({
             message: "Internal server error found!",
             error: error
-        })
+        }) 
     }
 
 }
