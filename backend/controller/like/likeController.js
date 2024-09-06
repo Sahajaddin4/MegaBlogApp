@@ -33,24 +33,23 @@ exports.likePost = async (req, res) => {
 }
 
 
-
 exports.disLikePost = async (req, res) => {
     try {
         const {postId,author} = req.body;
         
         let likeId=await Like.find({$and:[{post:postId,author:author}]});
       
-        
-       const removeLike=await Like.findOneAndDelete(likeId);
+    //    const removeLike=await Like.findOneAndDelete(likeId);
 
        // update like data  in post collection
-        const updatedPost = await Post.findByIdAndUpdate(postId, { $pull: { likes: removeLike._id } }, { new: true })
-            .populate("likes").exec();
+        // const updatedPost = await Post.findByIdAndUpdate(postId, { $pull: { likes: removeLike._id } }, { new: true })
+        //     .populate("likes").exec();
 
         
             return res.status(200).json({ 
             message: "post disliked succesfully",
-           
+           data: likeId[0]._id
+        //    data: likeId['_id']
         })
 
     } catch (error) {
