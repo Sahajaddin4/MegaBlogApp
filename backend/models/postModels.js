@@ -25,12 +25,12 @@ const postSchema=new mongoose.Schema({
          type:mongoose.Schema.Types.ObjectId,
          ref:"Comment"
     }],
-    createdAt:{
-        type:String,
-        required:true,
-        default:new Date(Date.now().toLocaleString())
-    }
-});
+    // createdAt:{
+    //     type:String,
+    //     required:true,
+    //     default:new Date()
+    // }
+},{ timestamps: true });
 
 
 //Model

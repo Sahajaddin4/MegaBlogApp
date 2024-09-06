@@ -26,7 +26,7 @@ exports.createPost = async (req, res) => {
 
 exports.getAllPosts=async(_,res)=>{
     try {
-        const posts = await Post.find({});
+        const posts = await Post.find({}).sort({ createdAt: -1 });
         return res.status(200).json({
             message:'Post fetched  succesfully',
             data:posts

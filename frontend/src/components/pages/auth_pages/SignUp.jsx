@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Link } from "react-router-dom";
 import eye from "../../../assets/eye.png";
 import crossEye from "../../../assets/crossEye.png";
 import { toast } from "react-toastify";
 import axios from "axios";
 import isEmail from 'validator/lib/isEmail';
+import { UserContext } from "../../../contextApi/userAuthContext";
 function SignUp() {
   const [passwordType, setPasswordType] = useState("password");
   const [cPasswordType, setCpasswordType] = useState("password");
@@ -14,7 +15,7 @@ function SignUp() {
     password: "",
     confirmPassword:""
   });
-
+  const{toastStyle}=useContext(UserContext);
   // Function to toggle password visibility
   function togglePasswordVisibility() {
     setPasswordType((prevType) => {
@@ -39,13 +40,14 @@ function SignUp() {
 
   //data send to database function
 const createAccount=async (e)=>{
+ 
     e.preventDefault();
     if(userData.email==="" || userData.name==="" || userData.password==="" || userData.confirmPassword===""){
-      toast.error('Please fill all details!');
+      toast.error('Please fill all details!',toastStyle);
     }
     else if( userData.password!==userData.confirmPassword)
     {
-        toast.error('Password not matched!');
+        toast.error('Password not matched!',toastStyle);
     }
     else{
       if(isEmail(userData.email)){
@@ -57,12 +59,12 @@ const createAccount=async (e)=>{
         toast.success(res.data.message);
         } catch (error) {
          console.log(error);
-         toast.error('Failed to create account!');
+         toast.error('Failed to create account!',toastStyle);
         }
         
      }
      else{
-      toast.error("Please follow email format..")
+      toast.error("Please follow email format..",toastStyle)
      }
      
       }

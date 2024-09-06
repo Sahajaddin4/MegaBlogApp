@@ -5,7 +5,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 function CreateBlog() {
   // State to manage blog data
-  const{isAuthenticated}=useContext(UserContext);
+  const{isAuthenticated,toastStyle}=useContext(UserContext);
   const navigate=useNavigate();
   useEffect(()=>{
     if(!isAuthenticated)
@@ -36,13 +36,14 @@ function CreateBlog() {
   async function handleSubmit(e) {
     e.preventDefault();
     // Implement data submission logic here
+   
       try {
          let res=await axios.post('/api/blog/api/create-post',blogData);
-         toast.success(res.data.message);
+         toast.success(res.data.message,toastStyle);
         navigate('/');
          
       } catch (error) {
-        toast.error('Failed to create post!');
+        toast.error('Failed to create post!',toastStyle);
       }
       finally{
         setBlogData({
@@ -59,7 +60,7 @@ function CreateBlog() {
         <h1 className="text-2xl font-bold">Create Blog</h1>
       </div>
       <div className="form">
-        <form className="flex flex-col gap-5" onSubmit={handleSubmit}>
+        <form className="flex flex-col gap-5" onSubmit={handleSubmit}> 
           {/* Title input field */}
           <div className="title flex gap-2 items-center">
             <label htmlFor="title">Title: </label>

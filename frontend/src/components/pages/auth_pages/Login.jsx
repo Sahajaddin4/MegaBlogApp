@@ -13,7 +13,7 @@ function Login() {
     password: ''
   });
   const navigate=useNavigate();
-    const {setIsAuthencticated,setUser,user}=useContext(UserContext);
+    const {setIsAuthencticated,setUser,toastStyle}=useContext(UserContext);
   // Function to toggle password visibility
   function togglePasswordVisibility() {
     setPasswordType(prevType => {
@@ -33,7 +33,7 @@ function Login() {
   const login =async(e)=>{
     try{
       e.preventDefault();
-
+      
       let res=await axios.post('/api/blog/api/user/login',userData);
      
        
@@ -41,12 +41,12 @@ function Login() {
         setUser(res.data.user);
       
         
-       toast.success(res.data.message);
+       toast.success(res.data.message,toastStyle);
        navigate('/');
       }
     catch(e){
       console.log(e);
-        toast.error('Failed to login account!');
+        toast.error('Failed to login account!',toastStyle);
     }
     finally{
       setUserData({

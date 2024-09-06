@@ -13,6 +13,7 @@ function App() {
     <div className="app bg-white rounded-lg max-w-[90vw] mx-auto p-4 min-h-screen">
       <Routes>
         <Route path="/" element={<Layout />}>
+        <Route path="/" element={<Home />} />
         <Route path="about" element={<About />} />
         <Route path="create-blog" element={<CreateBlog />}/>
         <Route path="user/login" element={<Login />} />
