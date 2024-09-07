@@ -5,16 +5,17 @@ import appLogo from "../../../assets/appLogo.jpeg";
 import { UserContext } from "../../../contextApi/userAuthContext";
 import { toast } from "react-toastify";
 import Cookies from 'js-cookie';
+import { BlogContext } from "../../../contextApi/BlogContextApi";
 function Navbar() {
 
   const{isAuthenticated,user,setIsAuthencticated}=useContext(UserContext);
- 
+ const {toastStyle}=useContext(BlogContext);
 
   //handle logout
   function handleLogout(){
     setIsAuthencticated('');
     Cookies.remove('token');
-    toast.warning('Logout successfull');
+    toast.warning('Logout successfull',toastStyle);
   }
   return (
     <div className="navbar">
@@ -45,9 +46,9 @@ function Navbar() {
             ( 
               
               <div className="logout-profile flex gap-5">
-              <NavLink to={"/user/profile"}>
-                  <button><i className="fa-duotone fa-solid fa-user"></i></button>
-                </NavLink>
+              
+                  <div><i className="fa-duotone fa-solid fa-user"></i><span className="text-sm ml-1 text-blue-400">{user}</span></div>
+               
                 <NavLink to={"#"}>
                   <button onClick={handleLogout}>logout</button>
                 </NavLink>

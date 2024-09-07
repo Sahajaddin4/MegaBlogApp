@@ -5,7 +5,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import axios from 'axios';
 import Cookies from 'js-cookie';
-import { UserContext } from '../../../contextApi/userAuthContext';
+import { UserContext } from '../../../contextApi/UserAuthContext';
+import { BlogContext } from '../../../contextApi/BlogContextApi';
 function Login() {
   const [passwordType, setPasswordType] = useState('password');
   const [userData, setUserData] = useState({
@@ -13,7 +14,8 @@ function Login() {
     password: ''
   });
   const navigate=useNavigate();
-    const {setIsAuthencticated,setUser,toastStyle}=useContext(UserContext);
+    const {setIsAuthencticated,setUser}=useContext(UserContext);
+    const{toastStyle}=useContext(BlogContext);
   // Function to toggle password visibility
   function togglePasswordVisibility() {
     setPasswordType(prevType => {
@@ -40,6 +42,7 @@ function Login() {
         setIsAuthencticated(Cookies.get('token'));
         setUser(res.data.user);
       
+      // console.log(toastStyle);
         
        toast.success(res.data.message,toastStyle);
        navigate('/');

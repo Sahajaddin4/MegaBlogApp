@@ -1,57 +1,100 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { BlogContext } from "../../../contextApi/BlogContextApi";
 import axios from "axios";
+import { UserContext } from "../../../contextApi/UserAuthContext";
 
-function Card({post}) {
-
-  const{isAuthenticated}=useContext(BlogContext);
-  const [isLiked,setIsLiked]=useState(false);
-  const[countLike,setCountLike]=useState(post.likes.length);
+function Card({ post }) {
+  //const { getLike } = useContext(BlogContext);
+  const { isAuthenticated, user } = useContext(UserContext);
+  const [isLiked, setIsLiked] = useState(false);
+  const [countLike, setCountLike] = useState(post.likes.length);
   //handle like
-  
- const handleLike=async()=>{
-  const data={
-    author:post.author,
-    postId:post._id
+
+  const handleLike = async () => {
+    const data = {
+      author: user,
+      postId: post._id,
+    };
+
+    if (isLiked) {
+      const res = await axios.delete(
+        "/api/blog/api/like-dislike/post-dislike",
+        { params: data }
+      );
+      //console.log('Dislike:',res);
+
+      setIsLiked(res.data.isLiked);
+    } else {
+      const res = await axios.post(
+        "/api/blog/api/like-dislike/post-like",
+        data
+      );
+      ///console.log('like:',res.data.isLiked);
+
+      setIsLiked(res.data.isLiked);
+    }
+  };
+  async function getLike(post, author) {
+    const data = {
+      post: post,
+      author: author,
+    };
+
+    let res = await axios.get("/api/blog/api/like-dislike/get-like", {
+      params: data,
+    });
+
+    //console.log(res.data);
+
+    setIsLiked(res.data.isLiked);
   }
-  if(isLiked)
-  {
-    //const dislike=await axios.post('/api/blog/api/like-dislike/like',data);
-   // console.log(dislike);
-    
+
+  async function getAllLike(post) {
+    let res = await axios.get("/api/blog/api/like-dislike/get-like-count", {
+      params: { post },
+    });
+    setCountLike(res.data.countedLike);
   }
-     else{
-      const like=await axios.post('/api/blog/api/like-dislike/post-like',data);
-      
-      setIsLiked(true)
-     }
-      
- }
-  
+  useEffect(() => {
+    getLike(post._id, user);
+    getAllLike(post._id);
+  }, [handleLike]);
+
   return (
     <div className="p-4 flex flex-col gap-3  bg-blue-100 rounded shadow-md">
       <div className="title-author flex justify-between">
-      <div className="title flex gap-2 ">
-        <h1 className="text-xl font-bold">Title:</h1>
-        <p>
-        {post.title}
-        </p>
+        <div className="title flex gap-2 ">
+          <h1 className="text-xl font-bold">Title:</h1>
+          <p>{post.title}</p>
+        </div>
+        <div className="author flex gap-3 justify-center items-center">
+          <p className="font-medium">By</p>
+          <span className="text-sm italic">{post.author} </span>
+        </div>
       </div>
-      <div className="author flex gap-3 justify-center items-center">
-          <p className="font-medium">By</p><span className="text-sm italic">{post.author} </span>
-      </div>
-      </div>
-     
 
       <div className="body flex gap-2 ">
         <h1 className="text-lg font-semibold">Descriptions:</h1>
-        <p>
-          {post.body}
-        </p>
+        <p>{post.body}</p>
       </div>
 
       <div className="like-dislike">
-      {isLiked?<i className="fa-regular fa-heart text-red-500  " onClick={handleLike}></i>:<i className="fa-regular fa-heart   " onClick={handleLike}></i>}
+        {isAuthenticated ? (
+          isLiked ? (
+            <i
+              className="fa-regular fa-heart text-red-500 hover:cursor-pointer "
+              onClick={handleLike}
+            ></i>
+          ) : (
+            <i
+              className="fa-regular fa-heart  hover:cursor-pointer  "
+              onClick={handleLike}
+            ></i>
+          )
+        ) : (
+          <i className="fa-regular fa-heart hover:cursor-not-allowed  "></i>
+        )}
+        <span>{countLike}</span>
       </div>
     </div>
   );

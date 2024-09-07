@@ -1,10 +1,15 @@
 import { createContext, useState } from "react";
 import Cookies from 'js-cookie';
+import { jwtDecode } from "jwt-decode";
 export const UserContext=createContext();
 
 export default function UserContextProvider({children}){
-    const [isAuthenticated,setIsAuthencticated]=useState(Cookies.get('token') || "");
-    const [user,setUser]=useState('');
+
+    const token=Cookies.get('token') ;
+    const name=token?jwtDecode(token).name:"";
+    
+    const [isAuthenticated,setIsAuthencticated]=useState(token || "");
+    const [user,setUser]=useState(name);
     const value={
        isAuthenticated,
        setIsAuthencticated,

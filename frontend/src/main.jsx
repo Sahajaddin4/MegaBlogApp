@@ -4,7 +4,7 @@ import App from './App.jsx'
 import './index.css'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import UserContextProvider from './contextApi/userAuthContext.jsx';
+import UserContextProvider from './contextApi/UserAuthContext.jsx';
 import BlogContextProvider from './contextApi/BlogContextApi.jsx';
 
 
@@ -15,7 +15,9 @@ createRoot(document.getElementById('root')).render(
 
    <div className="main bg-[#cccccc] min-h-screen">
       <App />
-      <ToastContainer />
+      <ToastContainer 
+
+/>
     </div>
       </BlogContextProvider>
 

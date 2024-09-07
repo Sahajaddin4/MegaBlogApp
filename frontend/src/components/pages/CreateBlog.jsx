@@ -1,11 +1,13 @@
 import React, { useContext, useEffect, useState } from "react";
-import { UserContext } from "../../contextApi/userAuthContext";
+import { UserContext } from "../../contextApi/UserAuthContext";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { BlogContext } from "../../contextApi/BlogContextApi";
 function CreateBlog() {
   // State to manage blog data
-  const{isAuthenticated,toastStyle}=useContext(UserContext);
+  const{isAuthenticated}=useContext(UserContext);
+  const{toastStyle}=useContext(BlogContext);
   const navigate=useNavigate();
   useEffect(()=>{
     if(!isAuthenticated)
