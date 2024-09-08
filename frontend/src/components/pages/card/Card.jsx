@@ -250,7 +250,7 @@ function Card({ post }) {
             setCloseModal={setCloseModal} 
             setIsOpen={setIsOpen} 
             closeModal={closeModal}
-            fetchcomments={showComments}
+            fetchcomments={fetchcomments}
             />
 
     </div>:''

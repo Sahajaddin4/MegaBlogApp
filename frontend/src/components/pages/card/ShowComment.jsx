@@ -1,14 +1,16 @@
-import React from "react";
+import React, { useContext } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { BlogContext } from "../../../contextApi/BlogContextApi";
 
 function ShowComment({ comment, fetchcomments }) {
+  const{toastStyle}=useContext(BlogContext);
   async function deletecomment(){
     const data = {
       commentId: comment._id,
     };
 
-
+ 
     try {
         // Unlike the post
         const res = await axios.delete(
@@ -17,7 +19,7 @@ function ShowComment({ comment, fetchcomments }) {
         );
         // console.log(res);
         await fetchcomments();
-        toast.success("Comment Deleted")
+        toast.success("Comment Deleted",toastStyle)
   }
   catch(e){
     console.log(e);
@@ -33,7 +35,7 @@ function ShowComment({ comment, fetchcomments }) {
       <div>
         <i
           onClick={deletecomment}
-          className="fas fa-comment-slash float-right"
+          className="fas fa-comment-slash float-right hover:cursor-pointer"
         />
       </div>
     </div>

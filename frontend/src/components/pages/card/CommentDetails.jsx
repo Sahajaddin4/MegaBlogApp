@@ -24,7 +24,7 @@ function CommentDetails(props) {
               <div className="show comments">
                 {props.comments.length > 0 ? (
                   props.comments.map((eachComment) => {
-                    return <ShowComment comment={eachComment} key={eachComment._id}/>;
+                    return <ShowComment comment={eachComment} key={eachComment._id} fetchcomments={props.fetchcomments}/>;
                   })
                 ) : (
                   <p>No comment found</p>
