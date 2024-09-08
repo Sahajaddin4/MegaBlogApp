@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { BlogContext } from "../../../contextApi/BlogContextApi";
 import axios from "axios";
 import { UserContext } from "../../../contextApi/UserAuthContext";
-import { toast } from 'react-toastify';
+import { toast } from "react-toastify";
 import CommentDetails from "./CommentDetails";
 
 function Card({ post }) {
@@ -10,19 +10,19 @@ function Card({ post }) {
   const { isAuthenticated, user } = useContext(UserContext);
 
   // State management
-  const [isLiked, setIsLiked] = useState(false);        // Track if the post is liked
+  const [isLiked, setIsLiked] = useState(false); // Track if the post is liked
   const [countLike, setCountLike] = useState(post.likes.length); // Like count
-  const [isExpanded, setIsExpanded] = useState(false);  // Track if the post description is expanded
+  const [isExpanded, setIsExpanded] = useState(false); // Track if the post description is expanded
   const [truncatedPost, setTruncatedPost] = useState(); // Truncated version of the post
-  const [isComment, setIsComment] = useState(false);    // Track if the post has a comment
-  const [comment, setComment] = useState("");           // Comment input state
-  const [loading, setLoading] = useState(false);        // Track if like request is in progress
+  const [comment, setComment] = useState(""); // Comment input state
+  const [loading, setLoading] = useState(false); // Track if like request is in progress
 
-  const [allComments,setAllComments]=useState([]);
-  const [isOpen,setIsOpen]=useState(false);
-  const [closeModal,setCloseModal]=useState(true);
+  const [allComments, setAllComments] = useState([]);
+  const [countComment, setCountComment] = useState(1);
+  const [isOpen, setIsOpen] = useState(false);
+  const [closeModal, setCloseModal] = useState(true);
 
-  let display='hidden';
+  let display = "hidden";
   // Get the toast style from BlogContext
   const { toastStyle } = useContext(BlogContext);
 
@@ -67,7 +67,7 @@ function Card({ post }) {
         setIsLiked(res.data.isLiked); // Update the liked state
       }
     } catch (error) {
-      toast.error('Failed to like the post', toastStyle); // Handle error
+      toast.error("Failed to like the post", toastStyle); // Handle error
     } finally {
       setLoading(false); // Set loading state back to false after the request completes
     }
@@ -103,8 +103,13 @@ function Card({ post }) {
     truncateDesc();
   }, [isExpanded]);
 
+  // --------------------------Commments-------------------------------------
   // Handle comment submission
   const handleComment = async () => {
+    if (comment === "") {
+      toast.warn("Enter Comment", toastStyle);
+      return;
+    }
     const data = {
       author: user,
       postId: post._id,
@@ -112,48 +117,47 @@ function Card({ post }) {
     };
 
     try {
-      // if (isComment) {
-      //   // Remove comment
-      //   const res = await axios.delete(
-      //     "/api/blog/api/comment/remove-comment",
-      //     { params: data }
-      //   );
-      //   toast.success(res.data.message, toastStyle);
-      //   setIsComment(res.data.isComment); // Update comment state
-      // } else {
-        // Add comment
-        const res = await axios.post(
-          "/api/blog/api/comment/add-comment",
-          data
-        );
-        toast.success(res.data.message, toastStyle);
-        setIsComment(res.data.isComment); // Update comment state
+      // Add comment
+      const res = await axios.post("/api/blog/api/comment/add-comment", data);
+      toast.success(res.data.message, toastStyle);
+      setCountComment(res.data.isComment); // Update comment state
+
       // }
     } catch (error) {
-      toast.error('Server error!', toastStyle); // Handle error
+      toast.error("Server error!", toastStyle); // Handle error
     } finally {
       setComment(""); // Reset comment input
     }
   };
 
-
-  ///////////////////////////Commments /////////////////
-  async function fetchcomments(){
-    const postDetails={
-      postId:post._id,
-    }
-       let res=await axios.get('/api/blog/api/comment/get-all-comments',{params:postDetails});
-       setAllComments(res.data.comments);
-       
+  async function fetchcomments() {
+    const postDetails = {
+      postId: post._id,
+    };
+    let res = await axios.get("/api/blog/api/comment/get-all-comments", {
+      params: postDetails,
+    });
+    setAllComments(res.data.comments);
   }
-  const showComments=async()=>{
+  const showComments = async () => {
     await fetchcomments();
     setIsOpen(true);
-     setCloseModal(false);
-     
+    setCloseModal(false);
+  };
+  async function getAllComment(post) {
+    let res = await axios.get("/api/blog/api/comment/get-comment-count", {
+      params: { post },
+    });
+    // console.log(res);
+
+    setCountComment(res.data.countedComment); // Update Comment count
   }
 
-  
+  // Run these functions on component mount and on `handleComment` change
+  useEffect(() => {
+    getAllComment(post._id);
+  }, [handleComment]);
+
   return (
     <div className="p-4 flex flex-col gap-3 bg-blue-100 rounded shadow-md">
       {/* Title and Author section */}
@@ -213,7 +217,7 @@ function Card({ post }) {
           ) : (
             <i className="fa-regular fa-heart hover:cursor-not-allowed"></i>
           )}
-          <span>{countLike}</span>
+          <span className="ml-1">{countLike}</span>
         </div>
 
         {/* Comment section */}
@@ -226,37 +230,35 @@ function Card({ post }) {
             value={comment}
             className="rounded hover:border hover:border-blue-400"
           />
-           <span>
+          <span>
             <button
               onClick={handleComment}
-             className="py-2 px-4 bg-green-400 text-white rounded-md"
-            >add</button>
+              className="py-2 px-4 bg-green-400 text-white rounded-md"
+            >
+              add
+            </button>
           </span>
           <span>
             <i
               onClick={showComments}
               className="fa-regular fa-comment hover:cursor-pointer"
-            ></i>
+            ><span className="mx-1">{countComment}</span></i>
           </span>
-          
-          
-          
+
           {/* Modals for showing comments */}
-           {isOpen && allComments?
+          {isOpen && allComments ? (
             <div className={`comments-show`}>
-
-            <CommentDetails 
-            comments={allComments} 
-            setCloseModal={setCloseModal} 
-            setIsOpen={setIsOpen} 
-            closeModal={closeModal}
-            fetchcomments={fetchcomments}
-            />
-
-    </div>:''
-               
-           }
-         
+              <CommentDetails
+                comments={allComments}
+                setCloseModal={setCloseModal}
+                setIsOpen={setIsOpen}
+                closeModal={closeModal}
+                fetchcomments={fetchcomments}
+              />
+            </div>
+          ) : (
+            ""
+          )}
         </div>
       </div>
     </div>

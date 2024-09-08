@@ -57,7 +57,38 @@ exports.getAllComments=async (req,res)=>{
     }  
    
 }
+exports.countCommentOfPost=async(req, res)=>{
+    try {
+        const { post } = req.query;
 
+
+        let comments = await Comment.find({ post: post });
+
+        const commentIds = comments.map((comment) => comment._id);
+
+
+        if (commentIds) {
+            return res.status(200).json({
+                message: "Comment counted",
+
+                countedComment: commentIds.length
+
+
+            })
+        }
+        return res.status(400).json({
+            message: "Failed to count Comments ",
+
+
+        })
+    } catch (error) {
+
+        return res.status(500).json({
+            message: "Internal server error found!",
+            error: error
+        })
+    }
+}
 
 
 exports.removeComment=async(req, res)=>{
