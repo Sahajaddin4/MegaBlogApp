@@ -30,6 +30,36 @@ exports.commentPost =async(req, res)=>{
     }
 }
 
+//Get All comments
+exports.getAllComments=async (req,res)=>{
+    try {
+        const{postId}=req.query;
+       
+        
+        let response=await Comment.find({post:postId});
+        if(response){
+            return res.status(200).json({
+                message:'Comment fetched succesfully',
+                comments:response
+            })
+        }
+        return res.status(200).json({
+            message:'No comments found!!',
+            comments:''
+        })
+    } catch (error) {
+        console.log(error);
+        
+        return res.status(500).json({
+            message:'server error',
+           
+        })
+    }  
+   
+}
+
+
+
 exports.removeComment=async(req, res)=>{
     try{
         const {commentId, postId} = req.body;
