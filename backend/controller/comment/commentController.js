@@ -62,10 +62,10 @@ exports.getAllComments=async (req,res)=>{
 
 exports.removeComment=async(req, res)=>{
     try{
-        const {commentId, postId} = req.body;
+        const {commentId} = req.query;
 
         const remComment = await Comment.findByIdAndDelete(commentId);
-
+        const postId = remComment.post;
         const updatedPost = await Post.findByIdAndUpdate(postId,{$pull: {comments: remComment._id}}, {new: true})
         .populate('comments').exec();
         

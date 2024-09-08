@@ -112,15 +112,15 @@ function Card({ post }) {
     };
 
     try {
-      if (isComment) {
-        // Remove comment
-        const res = await axios.delete(
-          "/api/blog/api/comment/remove-comment",
-          { params: data }
-        );
-        toast.success(res.data.message, toastStyle);
-        setIsComment(res.data.isComment); // Update comment state
-      } else {
+      // if (isComment) {
+      //   // Remove comment
+      //   const res = await axios.delete(
+      //     "/api/blog/api/comment/remove-comment",
+      //     { params: data }
+      //   );
+      //   toast.success(res.data.message, toastStyle);
+      //   setIsComment(res.data.isComment); // Update comment state
+      // } else {
         // Add comment
         const res = await axios.post(
           "/api/blog/api/comment/add-comment",
@@ -128,7 +128,7 @@ function Card({ post }) {
         );
         toast.success(res.data.message, toastStyle);
         setIsComment(res.data.isComment); // Update comment state
-      }
+      // }
     } catch (error) {
       toast.error('Server error!', toastStyle); // Handle error
     } finally {
@@ -152,6 +152,8 @@ function Card({ post }) {
      setCloseModal(false);
      
   }
+
+  
   return (
     <div className="p-4 flex flex-col gap-3 bg-blue-100 rounded shadow-md">
       {/* Title and Author section */}
@@ -248,6 +250,7 @@ function Card({ post }) {
             setCloseModal={setCloseModal} 
             setIsOpen={setIsOpen} 
             closeModal={closeModal}
+            fetchcomments={showComments}
             />
 
     </div>:''
