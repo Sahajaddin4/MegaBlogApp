@@ -22,7 +22,7 @@ function Card({ post }) {
   const [isOpen, setIsOpen] = useState(false);
   const [closeModal, setCloseModal] = useState(true);
 
-  let display = "hidden";
+  
   // Get the toast style from BlogContext
   const { toastStyle } = useContext(BlogContext);
 
@@ -242,7 +242,7 @@ function Card({ post }) {
             <i
               onClick={showComments}
               className="fa-regular fa-comment hover:cursor-pointer"
-            ><span className="mx-1">{countComment}</span></i>
+            ></i><span className="mx-1">{countComment}</span>
           </span>
 
           {/* Modals for showing comments */}
