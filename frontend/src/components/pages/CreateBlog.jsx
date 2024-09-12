@@ -40,7 +40,9 @@ function CreateBlog() {
     // Implement data submission logic here
    
       try {
-         let res=await axios.post('/api/blog/api/create-post',blogData);
+         let res=await axios.post('/api/blog/api/create-post',blogData,{
+          withCredentials:true
+        });
          toast.success(res.data.message,toastStyle);
         navigate('/');
          

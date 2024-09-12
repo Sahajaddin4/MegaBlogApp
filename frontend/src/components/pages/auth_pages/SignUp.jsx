@@ -78,7 +78,9 @@ function SignUp() {
 
     try {
       // API call to create an account
-      const res = await axios.post('/api/blog/api/user/signup', userData);
+      const res = await axios.post('/api/blog/api/user/signup', userData,{
+        withCredentials:true
+      });
       toast.success(res.data.message,toastStyle);
       navigate('/user/login')
     } catch (error) {

@@ -18,7 +18,9 @@ export default function BlogContextProvider({ children }) {
    
   };
   async function getAllBlogPosts() {
-    let getposts = await axios.get("/api/blog/api/get-all-posts");
+    let getposts = await axios.get("/api/blog/api/get-all-posts",{
+      withCredentials:true
+    });
     setPosts(getposts.data.data);
   }
 

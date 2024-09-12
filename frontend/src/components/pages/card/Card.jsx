@@ -55,14 +55,18 @@ function Card({ post }) {
         // Unlike the post
         const res = await axios.delete(
           "/api/blog/api/like-dislike/post-dislike",
-          { params: data }
+          { params: data },{
+            withCredentials:true
+          }
         );
         setIsLiked(res.data.isLiked); // Update the liked state
       } else {
         // Like the post
         const res = await axios.post(
           "/api/blog/api/like-dislike/post-like",
-          data
+          data,{
+            withCredentials:true
+          }
         );
         setIsLiked(res.data.isLiked); // Update the liked state
       }
@@ -78,7 +82,9 @@ function Card({ post }) {
     const data = { post, author };
 
     let res = await axios.get("/api/blog/api/like-dislike/get-like", {
-      params: data,
+      params: data
+    },{
+      withCredentials:true
     });
 
     setIsLiked(res.data.isLiked); // Update liked state based on response

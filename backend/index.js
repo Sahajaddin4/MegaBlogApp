@@ -18,7 +18,10 @@ dbConnect();
 //Parsing json data  middleware
 app.use(express.json());
 app.use(cookie())
-app.use(cors());
+app.use(cors({
+    origin:true,
+    credentials:true
+}));
 //Routes mapping for blog
 app.use('/blog/api',blogRoutes);
 //Routes mapping for likes

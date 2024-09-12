@@ -15,7 +15,9 @@ function ShowComment({ comment, fetchcomments }) {
         // Unlike the post
         const res = await axios.delete(
           "/api/blog/api/comment/remove-comment",
-          { params: data }
+          { params: data },{
+            withCredentials:true
+          }
         );
         // console.log(res);
         await fetchcomments();
