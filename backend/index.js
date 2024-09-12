@@ -19,9 +19,10 @@ dbConnect();
 app.use(express.json());
 app.use(cookie())
 app.use(cors({
-    origin:true,
-    credentials:true
+    origin: '*',
+    credentials: true
 }));
+
 //Routes mapping for blog
 app.use('/blog/api',blogRoutes);
 //Routes mapping for likes
