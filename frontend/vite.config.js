@@ -6,7 +6,7 @@ export default defineConfig({
   server: {
      proxy:{
       '/api': {
-        target: 'http://localhost:3000', // Change this to your backend server URL
+        target: 'https://mega-blog-app-backend.vercel.app', // Change this to your backend server URL
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ''), // Remove the /api prefix if needed
       },
