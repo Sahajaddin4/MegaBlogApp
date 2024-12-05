@@ -6,7 +6,8 @@ import CreateBlog from "./components/pages/CreateBlog";
 import Login from "./components/pages/auth_pages/Login";
 import SignUp from "./components/pages/auth_pages/SignUp";
 import Contact from "./components/pages/Contact";
-
+import Admin from "./components/pages/admin/Admin";
+import UserDashboard from "./components/pages/user/UserDashboard";
 
 function App() {
   return (
@@ -14,6 +15,8 @@ function App() {
       <Routes>
         <Route path="/" element={<Layout />}>
         <Route path="/" element={<Home />} />
+        <Route path="admin" element={<Admin />}/>
+        <Route path="user" element={<UserDashboard />}/>
         <Route path="about" element={<About />} />
         <Route path="create-blog" element={<CreateBlog />}/>
         <Route path="user/login" element={<Login />} />

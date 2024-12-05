@@ -3,10 +3,67 @@ const User = require("../../models/userModel");
 const jwt = require('jsonwebtoken')
 require("dotenv").config();
 
+exports.userSignUpByAdmin=async(req,res)=>{
+    try{
+        const {name, email, password,phone,userType} = req.body;
+     
+      
+        if(userType==="user"){
+            return   res.status(401).json({
+                success:false,
+                message:"Only Admin Can add user here"
+            })
+        }
+        // Validation
+      else{
+        let user =await User.findOne({email});
+        if(user){
+           return res.status(400).json({
+                success:false,
+                message:"Email already exists"
+            })
+        }
+        const hashPassword = await bcrypt.hash(password, 10);
+       
+       
+        let userData = new User ({
+            name,
+            email,
+            phone,
+            createdBy:'admin',
+            password:hashPassword
+        })
+      
+        
+        let response = await userData.save();
 
+         if(response){
+            return res.status(200).json({
+                success:true,
+                data: response.data,
+                message:"Account created Successfully"
+            })
+        }
+        return res.status(400).json({
+            success:false,
+            message:"Failed to create account!"
+        })
+
+      }
+    }
+    catch(error){
+     
+        
+        return res.status(500).json({
+            success:false,
+            error:error,
+            message:"Server Error"
+        })
+    }
+}
 exports.userSignup = async(req,res)=>{
     try{
-        const {name, email, password} = req.body;
+        const {name, email, password,phone} = req.body;
       
         
         // Validation
@@ -23,6 +80,7 @@ exports.userSignup = async(req,res)=>{
         let userData = new User ({
             name,
             email,
+            phone,
             password:hashPassword
         })
       
@@ -43,7 +101,7 @@ exports.userSignup = async(req,res)=>{
 
     }
     catch(error){
-        //console.log(error);
+        console.log(error);
         
         return res.status(500).json({
             success:false,
@@ -78,6 +136,7 @@ exports.userLogin=async(req,res)=>{
             const payload = {
                 email:user.email,
                 id: user._id,
+                userType:user.userType,
                 isAuth: true,
                 name: user.name
             }
@@ -92,15 +151,11 @@ exports.userLogin=async(req,res)=>{
             res.cookie("token", token, options).status(200).json({
                     success:true,
                     user:user.name,
+                    userType:user.userType,
                     token:token,
                     message:"Login successful..."
                 })
-            // return res.status(200).json({
-            //     success:true,
-            //     user:user.name,
-            //     token: token,
-            //     message:"Login successful..."
-            // })
+          
         }
         else{
             return res.status(400).json({
@@ -119,4 +174,26 @@ exports.userLogin=async(req,res)=>{
             message:"Server Error"
         })
     }
+}
+
+
+
+//get all users
+exports.getUsers=async(req,res)=>{
+   try {
+    const{userType}=req.body;
+    if(userType==='admin'){
+        const userLists=await User.find({userType:'user'});
+        return res.status(200).json({
+            message:'UserList fetched successfully',
+            userLists
+        })
+    }
+   } catch (error) {
+    return res.status(500).json({
+        success:false,
+        error:error,
+        message:"Server Error"
+    })
+   }
 }

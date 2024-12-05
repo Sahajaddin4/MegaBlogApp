@@ -9,6 +9,19 @@ const userSchema = new mongoose.Schema({
         type:String,
         required:true
     },
+    phone:{
+        type:Number,
+        required:true
+    },
+    userType:{
+        type:String,
+        required:true,
+        default:'user'
+    },
+    createdBy:{
+        type:String,
+        default:'user'
+    },
     password:{
         type:String,
         required:true

@@ -10,7 +10,9 @@ const auth=async(req,res,next)=>{
         if(token)
         {
             let payload=jwt.verify(token,process.env.JWT_SECRET_KEY);
+            req.body.userType=payload.userType;
             req.body.author=payload.name;
+            req.body.id=payload.id;
           next();
         }
       else{

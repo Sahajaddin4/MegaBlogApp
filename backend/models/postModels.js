@@ -8,6 +8,10 @@ const postSchema=new mongoose.Schema({
         required:true,
         maxLength:50
     },
+    userId:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:'User'
+    },
     body:{
         type:String,
         required:true
@@ -25,6 +29,14 @@ const postSchema=new mongoose.Schema({
          type:mongoose.Schema.Types.ObjectId,
          ref:"Comment"
     }],
+    approved:{
+        type:Boolean,
+        default:false
+    },
+    status:{
+        type:String,
+        default:"active"
+    }
     // createdAt:{
     //     type:String,
     //     required:true,

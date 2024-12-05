@@ -9,12 +9,14 @@ import { UserContext } from "../../../contextApi/userAuthContext";
 import { BlogContext } from "../../../contextApi/BlogContextApi";
 
 function SignUp() {
+  const{isAuthenticated}=useContext(UserContext);
   const [passwordType, setPasswordType] = useState("password");
   const [cPasswordType, setCpasswordType] = useState("password");
   const [userData, setUserData] = useState({
     name: "",
     email: "",
     password: "",
+    phone:null,
     confirmPassword: ""
   });
   
@@ -35,13 +37,13 @@ function SignUp() {
     const { name, value } = e.target;
     setUserData(prevData => ({
       ...prevData,
-      [name]: value,
+      [name]:name==="email"? value.toLowerCase():value
     }));
   }
 
   // Validation functions for better modularity
   const validateForm = () => {
-    if (userData.email === "" || userData.name === "" || userData.password === "" || userData.confirmPassword === "") {
+    if (userData.email === "" || userData.name === "" || userData.phone===null || userData.password === "" || userData.confirmPassword === "") {
       toast.error("Please fill all details!", toastStyle);
       return false;
     }
@@ -65,22 +67,33 @@ function SignUp() {
       name: "",
       email: "",
       password: "",
+      phone,
       confirmPassword: ""
     });
   };
 
   // Simplified createAccount function
   const createAccount = async (e) => {
-    e.preventDefault();
+    e.preventDefault();  
 
     // Validate form data before sending it to the server
     if (!validateForm()) return;
 
     try {
       // API call to create an account
-      const res = await axios.post('/api/blog/api/user/signup', userData);
+      if(isAuthenticated)
+      {
+        let res=await axios.post('/api/blog/api/user/add-by-admin/signup', userData);
+        toast.success(res.data.message,toastStyle);
+        navigate('/admin')
+      }
+      
+      
+      else{
+        const res = await axios.post('/api/blog/api/user/signup', userData);
       toast.success(res.data.message,toastStyle);
-      navigate('/user/login')
+      navigate('/user/login');
+      }
     } catch (error) {
       console.log(error);
       toast.error("Failed to create account!", toastStyle);
@@ -96,7 +109,7 @@ function SignUp() {
         <h1 className="text-2xl font-bold">Create Account</h1>
       </div>
       <div className="form">
-        <form className="flex flex-col gap-5" onSubmit={createAccount}>
+        <form className="flex flex-col gap-2" onSubmit={createAccount}>
           
           {/* Username */}
           <div className="username flex flex-col gap-2 justify-start ">
@@ -126,6 +139,21 @@ function SignUp() {
             />
           </div>
 
+          {/* Phone number */}
+          
+          <div className="phone flex flex-col gap-2 justify-start ">
+            <label htmlFor="phone">Phone:</label>
+            <input
+              type="number"
+              name="phone"
+              id="phone"
+              placeholder="0"
+              onChange={handleChange}
+              value={userData.phone}
+              required
+              className="border-2 hover:border-blue-400 py-2 rounded w-full"
+            />
+          </div>
           {/* Password */}
           <div className="password flex flex-col gap-2 justify-start">
             <label htmlFor="password">Password:</label>

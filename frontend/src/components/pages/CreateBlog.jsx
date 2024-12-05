@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { UserContext } from "../../contextApi/UserAuthContext";
+import { UserContext } from "../../contextApi/userAuthContext";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
@@ -91,20 +91,7 @@ function CreateBlog() {
             </div>
           </div>
 
-          {/* Author input field
-          <div className="author flex gap-2 items-center">
-            <label htmlFor="author">Author:</label>
-            <div className="relative border-2 hover:border-blue-400 py-2 rounded w-full">
-              <input
-                value={blogData.author}
-                type="text"
-                name="author"
-                id="author"
-                onChange={handleChange}
-                className="w-full border-none outline-none pr-10"
-              />
-            </div>
-          </div> */}
+          
 
           {/* Submit button */}
           <div className="btn text-center mt-5">

@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext } from "react";
 import { NavLink } from "react-router-dom";
 import './Navbar.css';
 import appLogo from "../../../assets/appLogo.jpeg";
@@ -8,14 +8,28 @@ import Cookies from 'js-cookie';
 import { BlogContext } from "../../../contextApi/BlogContextApi";
 function Navbar() {
 
-  const{isAuthenticated,user,setIsAuthencticated}=useContext(UserContext);
- const {toastStyle}=useContext(BlogContext);
+  const { isAuthenticated, user, setIsAuthencticated, userType } = useContext(UserContext);
+  const { toastStyle } = useContext(BlogContext);
 
+  //Conditional render content
+  function renderContent() {
+    if (userType === "admin") {
+      return (<NavLink to="/admin">
+        <button>Dashboard</button>
+      </NavLink>)
+    }
+    else if (userType === "user") {
+      return <NavLink to="/user">
+        <button>Dashboard</button>
+      </NavLink>
+    }
+    return null;
+  }
   //handle logout
-  function handleLogout(){
+  function handleLogout() {
     setIsAuthencticated('');
     Cookies.remove('token');
-    toast.warning('Logout successfull',toastStyle);
+    toast.warning('Logout successfull', toastStyle);
   }
   return (
     <div className="navbar">
@@ -25,12 +39,12 @@ function Navbar() {
             <img src={appLogo} alt="logo" className="w-[50px] h-[40px]" />
           </div>
           <div className="btns flex gap-5">
-          <NavLink to={"/create-blog"}
+            {userType === "user" ? <NavLink to={"/create-blog"}
 
-           className={``}
-          >
+              className={``}
+            >
               <button>New</button>
-            </NavLink>
+            </NavLink> : ""}
             <NavLink to={"/"}>
               <button>Home</button>
             </NavLink>
@@ -40,33 +54,36 @@ function Navbar() {
             <NavLink to={"/admin-contact"}>
               <button>Contact us</button>
             </NavLink>
+            {
+              renderContent()
+            }
           </div>
           {
-            isAuthenticated?
-            ( 
-              
-              <div className="logout-profile flex gap-5">
-              
+            isAuthenticated ?
+              (
+
+                <div className="logout-profile flex gap-5">
+
                   <div><i className="fa-duotone fa-solid fa-user"></i><span className="text-sm ml-1 text-blue-400">{user}</span></div>
-               
-                <NavLink to={"#"}>
-                  <button onClick={handleLogout}>logout</button>
-                </NavLink>
-              </div>
-              ):(
-              
-          <div className="login-signup flex gap-5">
-          <NavLink to={"/user/login"}>
-              <button>Login</button>
-            </NavLink>
-            <NavLink to={"/user/signup"}>
-              <button>Signup</button>
-            </NavLink>
-          </div>
+
+                  <NavLink to={"#"}>
+                    <button onClick={handleLogout}>logout</button>
+                  </NavLink>
+                </div>
+              ) : (
+
+                <div className="login-signup flex gap-5">
+                  <NavLink to={"/user/login"}>
+                    <button>Login</button>
+                  </NavLink>
+                  <NavLink to={"/user/signup"}>
+                    <button>Signup</button>
+                  </NavLink>
+                </div>
               )
           }
-        
-         
+
+
         </div>
       </nav>
     </div>

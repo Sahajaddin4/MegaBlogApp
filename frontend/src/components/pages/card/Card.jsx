@@ -1,13 +1,14 @@
 import React, { useContext, useEffect, useState } from "react";
 import { BlogContext } from "../../../contextApi/BlogContextApi";
 import axios from "axios";
-import { UserContext } from "../../../contextApi/UserAuthContext";
+import { UserContext } from "../../../contextApi/userAuthContext";
 import { toast } from "react-toastify";
 import CommentDetails from "./CommentDetails";
 
 function Card({ post }) {
   // Access the current user's authentication context
   const { isAuthenticated, user } = useContext(UserContext);
+
 
   // State management
   const [isLiked, setIsLiked] = useState(false); // Track if the post is liked
@@ -148,7 +149,7 @@ function Card({ post }) {
     let res = await axios.get("/api/blog/api/comment/get-comment-count", {
       params: { post },
     });
-    // console.log(res);
+
 
     setCountComment(res.data.countedComment); // Update Comment count
   }
@@ -207,6 +208,7 @@ function Card({ post }) {
               <i
                 className="fa-regular fa-heart text-red-500 hover:cursor-pointer"
                 onClick={handleLike}
+                role="button"
               ></i>
             ) : (
               <i

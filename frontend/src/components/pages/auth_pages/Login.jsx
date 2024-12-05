@@ -4,8 +4,8 @@ import crossEye from '../../../assets/crossEye.png';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import axios from 'axios';
-import Cookies from 'js-cookie';
-import { UserContext } from '../../../contextApi/UserAuthContext';
+import Cookies from 'js-cookie'; 
+import { UserContext } from '../../../contextApi/userAuthContext';
 import { BlogContext } from '../../../contextApi/BlogContextApi';
 function Login() {
   const [passwordType, setPasswordType] = useState('password');
@@ -28,7 +28,7 @@ function Login() {
     const { name, value } = e.target;
     setUserData(prevData => ({
       ...prevData,
-      [name]: value
+      [name]:name==="email"? value.toLowerCase():value
     }));
   }
 
@@ -41,11 +41,10 @@ function Login() {
        
         setIsAuthencticated(Cookies.get('token'));
         setUser(res.data.user);
-      
-      // console.log(toastStyle);
-        
+    
        toast.success(res.data.message,toastStyle);
-       navigate('/');
+       
+       res.data.userType==='admin'?navigate('/admin'):navigate('/');
       }
     catch(e){
       console.log(e);
@@ -74,7 +73,9 @@ function Login() {
               type="text"
               name="email"
               id="email"
+              
               onChange={handleChange}
+
               value={userData.email}
               className="border-2 ml-7 hover:border-blue-400 py-2 rounded w-full"
             />

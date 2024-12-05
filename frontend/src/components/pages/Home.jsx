@@ -5,13 +5,15 @@ import Spinner from './spinner/Spinner';
 
 function Home() {
     const {getAllBlogPosts,posts,loader,setLoader}=useContext(BlogContext);
+    const fetchPosts=async()=>{
+
+      await getAllBlogPosts();
+      
+    }
     useEffect(()=>{
-      getAllBlogPosts();
-      setTimeout(()=>{
-        setLoader(false);
-      },500);
-      ;
-   },[])
+     fetchPosts();
+     setLoader(false);
+   },[]);
     
      
   return (
