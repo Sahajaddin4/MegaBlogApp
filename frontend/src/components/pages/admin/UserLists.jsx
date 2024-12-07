@@ -1,10 +1,21 @@
 import React from 'react'
 
-function UserLists({ users }) {
+function UserLists({ users,removeUser,activeUserAc }) {
 
 
-
-
+   function renderContent(status,userId){
+    if(status==="active")
+{
+    return <button onClick={()=>{removeUser(userId)}} 
+    className='bg-red-700 text-white rounded px-2 py-1 m-1 
+    cursor-pointer hover:bg-white hover:text-red-600'>Remove</button>
+}
+else{
+    return <button onClick={()=>{activeUserAc(userId)}} 
+    className='bg-green-700 text-white rounded px-3 py-1 m-1 
+    cursor-pointer hover:bg-white hover:text-green-600'>Active</button>
+}
+   }
     return (
         <div >
             <table className='w-full'>
@@ -26,7 +37,7 @@ function UserLists({ users }) {
                                     <td className='border-2 text-center'> {user.email}</td>
                                     <td className='border-2 text-center'>{user.phone}</td>
                                     <td className='border-2 text-center'>{user.createdBy}</td>
-                                    <td className='border-2 text-center'><button className='bg-red-700 text-white rounded px-2 py-1 m-1 cursor-pointer hover:bg-white hover:text-red-600'>Remove</button></td>
+                                    <td className='border-2 text-center'>{renderContent(user.status,user._id)}</td>
                                 </tr>
                             )
                         })

@@ -69,8 +69,8 @@ exports.userSignup = async(req,res)=>{
         // Validation
         let user =await User.findOne({email});
         if(user){
-           return res.status(400).json({
-                success:true,
+           return res.status(200).json({
+                success:false,
                 message:"Email already exists"
             })
         }
@@ -121,9 +121,9 @@ exports.userLogin=async(req,res)=>{
         // Validation
 
 
-        let user=await User.findOne({email});
+        let user=await User.findOne({email,status:"active"});
         if(!user){
-            return res.status(400).json({
+            return res.status(200).json({
                 success:false,
                 message: "User does not exist"
             })
@@ -196,4 +196,74 @@ exports.getUsers=async(req,res)=>{
         message:"Server Error"
     })
    }
+}
+
+
+//Remove user
+exports.removeUser=async(req,res)=>{
+    try {
+        const userId=req.params.id;
+        const{userType}=req.body;
+        if(userType==='admin'){
+            const response=await User.findByIdAndUpdate(userId,{$set:{status:"inactive"}});
+           if(response){
+            return res.status(200).json({
+                message:'UserList fetched successfully',
+                
+            });
+           }
+           else{
+            return res.status(400).json({
+                message:'Error at removing a user.',
+                
+            });
+           }
+        }
+        else{
+            return res.status(401).json({
+                message:'Only Admin ca remove.'
+            })
+        }
+       } catch (error) {
+        return res.status(500).json({
+            success:false,
+            error:error,
+            message:"Server Error"
+        })
+       }
+}
+
+
+
+exports.activateUser=async(req,res)=>{
+    try {
+        const userId=req.params.id;
+        const{userType}=req.body;
+        if(userType==='admin'){
+            const response=await User.findByIdAndUpdate(userId,{$set:{status:"active"}},{new:true});
+           if(response){
+            return res.status(200).json({
+                message:'User account activated again successfully',
+                users:response
+            });
+           }
+           else{
+            return res.status(400).json({
+                message:'Error at activating  an user account .',
+                
+            });
+           }
+        }
+        else{
+            return res.status(401).json({
+                message:'Only Admin ca remove.'
+            })
+        }
+       } catch (error) {
+        return res.status(500).json({
+            success:false,
+            error:error,
+            message:"Server Error"
+        })
+       }
 }

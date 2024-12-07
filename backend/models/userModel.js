@@ -10,7 +10,7 @@ const userSchema = new mongoose.Schema({
         required:true
     },
     phone:{
-        type:Number,
+        type:String,
         required:true
     },
     userType:{
@@ -21,6 +21,10 @@ const userSchema = new mongoose.Schema({
     createdBy:{
         type:String,
         default:'user'
+    },
+    status:{
+        type:String,
+        default:"active"
     },
     password:{
         type:String,

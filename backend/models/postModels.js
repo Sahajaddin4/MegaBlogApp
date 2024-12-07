@@ -37,11 +37,7 @@ const postSchema=new mongoose.Schema({
         type:String,
         default:"active"
     }
-    // createdAt:{
-    //     type:String,
-    //     required:true,
-    //     default:new Date()
-    // }
+   
 },{ timestamps: true });
 
 

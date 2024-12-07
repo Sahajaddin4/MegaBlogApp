@@ -9,19 +9,20 @@ import { UserContext } from "../../../contextApi/userAuthContext";
 import { BlogContext } from "../../../contextApi/BlogContextApi";
 
 function SignUp() {
-  const{isAuthenticated}=useContext(UserContext);
+  const { isAuthenticated } = useContext(UserContext);
   const [passwordType, setPasswordType] = useState("password");
   const [cPasswordType, setCpasswordType] = useState("password");
   const [userData, setUserData] = useState({
     name: "",
     email: "",
     password: "",
-    phone:null,
+    phone: "+91", // Changed to empty string
     confirmPassword: ""
   });
-  
   const { toastStyle } = useContext(BlogContext);
-  const navigate=useNavigate();
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false); // Added loading state
+
   // Function to toggle password visibility
   function togglePasswordVisibility() {
     setPasswordType(prevType => prevType === "password" ? "text" : "password");
@@ -37,13 +38,13 @@ function SignUp() {
     const { name, value } = e.target;
     setUserData(prevData => ({
       ...prevData,
-      [name]:name==="email"? value.toLowerCase():value
+      [name]: name === "email" ? value.toLowerCase() : value
     }));
   }
 
-  // Validation functions for better modularity
+  // Validation function
   const validateForm = () => {
-    if (userData.email === "" || userData.name === "" || userData.phone===null || userData.password === "" || userData.confirmPassword === "") {
+    if (userData.email === "" || userData.name === "" || userData.phone === "" || userData.password === "" || userData.confirmPassword === "") {
       toast.error("Please fill all details!", toastStyle);
       return false;
     }
@@ -58,6 +59,12 @@ function SignUp() {
       return false;
     }
 
+    // Validate phone number (minimum 10 digits)
+    if (userData.phone.length < 10) {
+      toast.error("Please enter a valid phone number!", toastStyle);
+      return false;
+    }
+
     return true;
   };
 
@@ -67,40 +74,46 @@ function SignUp() {
       name: "",
       email: "",
       password: "",
-      phone,
+      phone: "+91", // Reset phone to empty string
       confirmPassword: ""
     });
   };
 
   // Simplified createAccount function
   const createAccount = async (e) => {
-    e.preventDefault();  
+    e.preventDefault();
+    setLoading(true); // Set loading to true
 
     // Validate form data before sending it to the server
-    if (!validateForm()) return;
+    if (!validateForm()) {
+      setLoading(false); // Reset loading state on error
+      return;
+    }
 
     try {
       // API call to create an account
-      if(isAuthenticated)
-      {
-        let res=await axios.post('/api/blog/api/user/add-by-admin/signup', userData);
-        toast.success(res.data.message,toastStyle);
-        navigate('/admin')
-      }
-      
-      
-      else{
+      if (isAuthenticated) {
+        let res = await axios.post('/api/blog/api/user/add-by-admin/signup', userData);
+        toast.success(res.data.message, toastStyle);
+        navigate('/admin');
+      } else {
         const res = await axios.post('/api/blog/api/user/signup', userData);
-      toast.success(res.data.message,toastStyle);
-      navigate('/user/login');
+       if(res.data.success===false)
+       {
+        toast.error(res.data.message,toastStyle);
+        
+       }
+       else { toast.success(res.data.message, toastStyle);}
+        navigate('/user/login');
       }
     } catch (error) {
       console.log(error);
       toast.error("Failed to create account!", toastStyle);
     }
 
-    // Reset form after submission
+    // Reset form and loading state
     resetForm();
+    setLoading(false); // Reset loading state after submission
   };
 
   return (
@@ -110,7 +123,7 @@ function SignUp() {
       </div>
       <div className="form">
         <form className="flex flex-col gap-2" onSubmit={createAccount}>
-          
+
           {/* Username */}
           <div className="username flex flex-col gap-2 justify-start ">
             <label htmlFor="username">UserName:</label>
@@ -140,20 +153,20 @@ function SignUp() {
           </div>
 
           {/* Phone number */}
-          
           <div className="phone flex flex-col gap-2 justify-start ">
             <label htmlFor="phone">Phone:</label>
             <input
-              type="number"
+              type="tel" // Changed from "number" to "tel"
               name="phone"
               id="phone"
-              placeholder="0"
+              placeholder="Enter your phone number"
               onChange={handleChange}
               value={userData.phone}
               required
               className="border-2 hover:border-blue-400 py-2 rounded w-full"
             />
           </div>
+
           {/* Password */}
           <div className="password flex flex-col gap-2 justify-start">
             <label htmlFor="password">Password:</label>
@@ -225,8 +238,9 @@ function SignUp() {
             <button
               type="submit"
               className="py-2 px-4 rounded w-[60%] mx-auto bg-blue-600 text-white"
+              disabled={loading} // Disable button while loading
             >
-              Create
+              {loading ? 'Creating...' : 'Create'}
             </button>
           </div>
         </form>

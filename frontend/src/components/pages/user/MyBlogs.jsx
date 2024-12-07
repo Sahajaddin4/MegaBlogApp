@@ -3,8 +3,11 @@ import React, { useContext } from 'react'
 import { BlogContext } from '../../../contextApi/BlogContextApi'
 import Spinner from '../spinner/Spinner';
 import { toast } from 'react-toastify';
+import { Link } from 'react-router-dom';
+
 
 function MyBlogs({blogs}) {
+  
     
     const {loader,setLoader,getAllBlogPosts,toastStyle}=useContext(BlogContext);
     async function deleteBlog(postId){
@@ -39,6 +42,8 @@ function MyBlogs({blogs}) {
                 <thead className='border-2 p-2'>
                     <tr  >
                         <th className='border-r-2 p-2'>Title</th>
+                        <th className='border-r-2 p-2'>Count Likes</th>
+                        <th className='border-r-2 p-2'>Count Comments</th>
                         <th className='border-r-2 p-2'>Date</th>
                         <th className='border-r-2 p-2'>Approved</th>
                         <th className='border-r-2 p-2'>Status</th>
@@ -50,7 +55,9 @@ function MyBlogs({blogs}) {
                         blogs.map((blog) => {
                             return (
                                 <tr key={blog._id}>
-                                    <td className='border-2 text-center'>{blog.title}</td>
+                                    <td className='border-2 text-center cursor-pointer'><Link to={`/user/my-blog/${blog._id}`}>{blog.title}</Link></td>
+                                    <td className='border-2 text-center'>{blog.likes.length}</td>
+                                    <td className='border-2 text-center'>{blog.comments.length}</td>
                                     <td className='border-2 text-center'> {new Date(blog.updatedAt).toLocaleString()}</td>
                                     <td className='border-2 text-center'>{blog.approved===false?"No":"Yes"}</td>
                                     <td className='border-2 text-center'>{blog.status}</td>

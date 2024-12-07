@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import './Navbar.css';
 import appLogo from "../../../assets/appLogo.jpeg";
 import { UserContext } from "../../../contextApi/userAuthContext";
@@ -10,7 +10,7 @@ function Navbar() {
 
   const { isAuthenticated, user, setIsAuthencticated, userType } = useContext(UserContext);
   const { toastStyle } = useContext(BlogContext);
-
+   const navigate=useNavigate();
   //Conditional render content
   function renderContent() {
     if (userType === "admin") {
@@ -30,6 +30,7 @@ function Navbar() {
     setIsAuthencticated('');
     Cookies.remove('token');
     toast.warning('Logout successfull', toastStyle);
+    navigate('/');
   }
   return (
     <div className="navbar">

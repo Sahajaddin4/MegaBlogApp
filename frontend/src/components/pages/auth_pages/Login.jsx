@@ -37,7 +37,14 @@ function Login() {
       e.preventDefault();
       
       let res=await axios.post('/api/blog/api/user/login',userData);
-     
+      
+      
+     if(res.data.success===false)
+     {
+      toast.error("User does not exists",toastStyle);
+      navigate('/user/signup');
+      return
+     }
        
         setIsAuthencticated(Cookies.get('token'));
         setUser(res.data.user);

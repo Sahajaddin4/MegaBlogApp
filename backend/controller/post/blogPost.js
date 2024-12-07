@@ -129,7 +129,31 @@ exports.postApprove=async(req,res)=>{
 
 }
 
+exports.approveRejectedPost=async(req,res)=>{
+    try {
+        const postId=req.params.id;
+        const {userType}=req.body;
+        if(userType==="admin")
+        {
+            await Post.findByIdAndUpdate(postId,{approved:true,status:"active"},{new:true});
+            return res.status(200).json({
+                message:'Post approved succesfully',
+                
+            })
+            
+        }
+        return res.status(400).json({
+            message:'Only admin can approve or reject',
+            
+        })
+     } catch (error) {
+        return res.status(500).json({
+            message:"Internal server error found!",
+            error:error
+        })
+     }
 
+}
 exports.postReject=async(req,res)=>{
     try {
         const postId=req.params.id;
@@ -162,6 +186,12 @@ exports.postReject=async(req,res)=>{
 exports.getMyBlogs=async(req,res)=>{
     try {
           const userId=req.params.id;
+          const {userType}=req.body;
+          if(userType!=="user"){
+            return res.status(401).json({
+                message:"Only user can get his blogs."
+            })
+          }
           let blogs=await Post.find({userId:userId});
           if(!blogs)
           {
@@ -182,4 +212,35 @@ exports.getMyBlogs=async(req,res)=>{
             error:error
         })
     }
+}
+
+exports.getOneBlog=async(req,res)=>{
+    try {
+        const blogId=req.params.id;
+        const {userType}=req.body;
+        if(userType!=="user"){
+          return res.status(401).json({
+              message:"Only user can get his blogs."
+          })
+        }
+        let blog=await Post.findById(blogId);
+        if(!blog)
+        {
+          return res.status(400).json({
+              message:'failed to fetched user blogs',
+              
+            })
+        }
+        return res.status(200).json({
+          message:'Successfully fetched user blogs',
+          blog
+        });
+  } catch (error) {
+   
+      
+      return res.status(500).json({
+          message:"Internal server error found!",
+          error:error
+      })
+  }
 }

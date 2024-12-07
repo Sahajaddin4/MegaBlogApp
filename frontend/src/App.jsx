@@ -8,6 +8,7 @@ import SignUp from "./components/pages/auth_pages/SignUp";
 import Contact from "./components/pages/Contact";
 import Admin from "./components/pages/admin/Admin";
 import UserDashboard from "./components/pages/user/UserDashboard";
+import ShowMyBlog from "./components/pages/user/ShowMyBlog";
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="admin" element={<Admin />}/>
         <Route path="user" element={<UserDashboard />}/>
+        <Route path="user/my-blog/:id" element={<ShowMyBlog />} />
         <Route path="about" element={<About />} />
         <Route path="create-blog" element={<CreateBlog />}/>
         <Route path="user/login" element={<Login />} />
