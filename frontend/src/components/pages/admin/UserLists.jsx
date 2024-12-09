@@ -17,7 +17,7 @@ else{
 }
    }
     return (
-        <div >
+        <div className='overflow-y-scroll'>
             <table className='w-full'>
                 <thead className='border-2 p-2'>
                     <tr  >

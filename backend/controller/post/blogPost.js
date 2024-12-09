@@ -29,22 +29,46 @@ exports.getAllPosts=async(req,res)=>{
     try {
         const user=req.params.id;
        
-       
+        
+        const limit =parseInt(req.query.limit) || 5;
+        const page =parseInt(req.query.page) || 1;
+        const skip=(page-1)*limit;
         if(user==="1"){
-            const posts = await Post.find({}).sort({ createdAt: -1 });
+            const [totalCount, posts] = await Promise.all([
+                Post.countDocuments(), // Get the total count of documents
+                Post.find({}) // Fetch the paginated posts
+                  .sort({ createdAt: -1 })
+                  .skip(skip)
+                  .limit(limit)
+              ]);
+              
+              const totalPage = Math.ceil(totalCount / limit);
+           
+            
             
         return res.status(200).json({
             message:'Post fetched  succesfully',
-            data:posts
+            data:posts,
+            totalPage
         })
         }
         else if(user==="0"){
-            const posts = await Post.find({approved:true}).sort({ createdAt: -1 });
-            
-            
+            const [totalCount, posts] = await Promise.all([
+                Post.countDocuments({ approved: true }), // Get the total count of approved posts
+                Post.find({ approved: true }) // Fetch the paginated approved posts
+                  .sort({ createdAt: -1 })
+                  .skip(skip)
+                  .limit(limit)
+              ]);
+              
+              const totalPage = Math.ceil(totalCount / limit); // Calculate total pages
+              
+              
+              
         return res.status(200).json({
             message:'Post fetched  succesfully',
-            data:posts
+            data:posts,
+            totalPage
         })
         }
         else {

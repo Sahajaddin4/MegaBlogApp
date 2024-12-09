@@ -47,7 +47,7 @@ function Navbar() {
               <button>New</button>
             </NavLink> : ""}
             <NavLink to={"/"}>
-              <button>Home</button>
+              <button>Blogs</button>
             </NavLink>
             <NavLink to={"/about"}>
               <button>About</button>

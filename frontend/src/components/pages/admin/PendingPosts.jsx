@@ -3,7 +3,7 @@ import Card from '../card/Card'
 
 function PendingPosts({posts,postApproved,postRejected}) {
   return (
-    <div>
+    <div className='overflow-y-scroll'>
        { (
           posts.map((post) => (
           <div key={post._id} className='flex gap-2 '>

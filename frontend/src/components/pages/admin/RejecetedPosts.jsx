@@ -5,7 +5,7 @@ function RejecetedPosts({posts,approveRejectedPosts}) {
 
    
   return (
-    <div>
+    <div className='overflow-y-scroll'>
          { (
           posts.map((post) => (
           <div key={post._id} className='flex gap-2 '>

@@ -9,6 +9,8 @@ export default function BlogContextProvider({ children }) {
   const [rejectedPosts,setRejecetedPosts]=useState([]);
   const [loader, setLoader] = useState(true);
   const {userType}=useContext(UserContext);
+ 
+  const [totalPages,setTotalPages]  =useState(1);
   const toastStyle = {
     position: "top-center",
     autoClose: 500, 
@@ -20,13 +22,14 @@ export default function BlogContextProvider({ children }) {
     theme: "light",    
    
   };
-  async function getAllBlogPosts() {
+  async function getAllBlogPosts(currentPage) {
     let user="0";
     if(userType==="admin"){
       user="1" ;  
     }
    try {
-    let url=`/api/blog/api/get-all-posts/${user}`;
+    let url=`/api/blog/api/get-all-posts/${user}?page=${currentPage}&limit=${5}`;
+    setLoader(true);
     let getposts = await axios.get(url);
     let tempPosts=getposts.data.data.filter((post)=>post.status==="active");
     let pending=getposts.data.data.filter((post)=>post.approved===false && post.status==="active");
@@ -34,6 +37,8 @@ export default function BlogContextProvider({ children }) {
     setPosts(tempPosts);
     setPendingPosts(pending);
     setRejecetedPosts(rejected);
+    setTotalPages(getposts.data.totalPage);
+    setLoader(false);
    } catch (error) {
      console.log(error); 
    }
@@ -45,12 +50,13 @@ export default function BlogContextProvider({ children }) {
       setPosts,
       loader,
       pendingPosts,
+      totalPages,
       rejectedPosts,
       toastStyle,
       setLoader,
       getAllBlogPosts, 
     
-  }),[getAllBlogPosts,setLoader]);
+  }),[getAllBlogPosts,totalPages]);
 
   return <BlogContext.Provider value={value}>{children}</BlogContext.Provider>;
 }

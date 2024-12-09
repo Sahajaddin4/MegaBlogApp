@@ -5,22 +5,23 @@ import { UserContext } from '../../../contextApi/userAuthContext';
 import { Link, useNavigate } from 'react-router-dom';
 import Spinner from '../spinner/Spinner';
 import axios from 'axios';
-import Card from '../card/Card';
 import { toast } from 'react-toastify';
 import PendingPosts from './PendingPosts';
 import RejecetedPosts from './RejecetedPosts';
 
+
 function Admin() {
   // Destructuring necessary data and functions from BlogContext and UserContext
-  const { posts, loader, setLoader, toastStyle, getAllBlogPosts,rejectedPosts,pendingPosts } = useContext(BlogContext);
+  const {  loader, setLoader, toastStyle, getAllBlogPosts,rejectedPosts,pendingPosts } = useContext(BlogContext);
   const { isAuthenticated,userType } = useContext(UserContext);
   
   // Local states for managing users, posts, and UI logic
   const [users, setUsers] = useState([]);
   const [pending, setPending] = useState(false);
   const [showUsers, setShowUsers] = useState(true);
-  const [showPost, setShowPost] = useState(false);
+  
   const [rejected,setRejected]=useState(false);
+  const [currentPage,setCurrentPage]=useState(1);
   const navigate = useNavigate();
 
 //Active user account again
@@ -112,14 +113,7 @@ const removeUser=async(userId)=>{
       );
     }
 
-    if (showPost) {
-      return posts.length > 0 ? (
-        posts.map((post) => <div key={post._id} className='mb-2'><Card  post={post} /></div>)
-      ) : (
-        'No posts available'
-      );
-    }
-
+   
     if (pending) {
       return pendingPosts.length > 0 ?<PendingPosts postApproved={postApproved} postRejected={postRejected} posts={pendingPosts}/> : (
         'No pending posts' // Message when there are no posts pending approval
@@ -138,34 +132,49 @@ const removeUser=async(userId)=>{
     if (!isAuthenticated && userType!=="admin") {
       navigate('/user/login'); // If not authenticated, redirect to login page
     }
+    
     getUserList();
   }, [isAuthenticated]);
 
- const fetchPosts=async()=>{
+  const handleNextPage=()=>{
+    //console.log(currentPage);
+    
+    setCurrentPage(currentPage+1);
+    getAllBlogPosts(currentPage);
+   }
    
-  await getAllBlogPosts();
- setLoader(false);
+   const handlePrevPage=()=>{
+    //console.log(currentPage);
+    setCurrentPage(currentPage-1);
+    getAllBlogPosts(currentPage);
+   }
+
+ const fetchPosts=async(currentPage)=>{
+   
+   
+  await getAllBlogPosts(currentPage);
+ 
  }
 
 
 
  const fetchpendingPosts=()=>{
-  setLoader(true);
+  //setLoader(true);
   fetchPosts();
-  setLoader(false);
+  //setLoader(false);
   setRejected(false)
   setShowUsers(false); // Hide users list
-  setShowPost(false); // Hide posts
+ 
   setPending(true); // Show pending posts
  }
 
 
  const fetchRejectedPosts=()=>{
-  setLoader(true);
+  //setLoader(true);
   fetchPosts();
-  setLoader(false);
+ // setLoader(false);
   setShowUsers(false); // Hide users list
-  setShowPost(false); // Hide posts
+ 
   setPending(false); // Show pending posts
   setRejected(true);
  }
@@ -174,9 +183,9 @@ const removeUser=async(userId)=>{
       {loader ? (
         <Spinner /> // Show a loading spinner while data is being fetched
       ) : (
-        <div className="flex gap-10 mt-10 overflow-hidden h-[100vh]">
+        <div className="flex gap-10 mt-10 overflow-hidden ">
           {/* Left Sidebar */}
-          <div className="leftSlidebar overflow-hidden h-[100vh] min-w-[200px] justify-start flex flex-col gap-2 pr-5 border-r-2">
+          <div className="leftSlidebar overflow-hidden max-h-[100vh] min-w-[200px] justify-start flex flex-col gap-2 pr-5 border-r-2">
             <div className="adminDetails"></div>
             <div className="adminControler flex flex-col ">
               {/* Button to add a new user */}
@@ -192,7 +201,7 @@ const removeUser=async(userId)=>{
                 onClick={() => {
                   getUserList();
                   setRejected(false);
-                  setShowPost(false); // Hide posts
+                 
                   setPending(false); // Hide pending posts
                   setShowUsers(true); // Show users list
                 }}
@@ -200,21 +209,7 @@ const removeUser=async(userId)=>{
                 Users
               </button>
              </div>
-              {/* Button to show the list of posts */}
-              <div>
-              <button
-                onClick={() => {
-                  getAllBlogPosts(); // Fetch all blog posts
-                  setRejected();
-                  setShowUsers(false); // Hide users list
-                  setPending(false); // Hide pending posts
-                  setShowPost(true); // Show posts
-                }}
-                className="posts"
-              >
-                Posts
-              </button>
-              </div>
+             
               {/* Button to show posts pending approval */}
               <div className="pending-approval">
                 <button
@@ -240,7 +235,7 @@ const removeUser=async(userId)=>{
           </div>
 
           {/* Right Sidebar: Displays the actual content based on state */}
-          <div className="rightSlidebar grow h-[100vh] overflow-scroll">
+          <div className="rightSlidebar grow ">
             {renderContent()} {/* Renders the content (users, posts, or pending approval) */}
           </div>
         </div>
