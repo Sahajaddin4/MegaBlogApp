@@ -14,12 +14,12 @@ function CommentDetails(props) {
     <div>
       {/* Modal */}
       {!props.closeModal && (
-        <div className="fixed inset-0 z-50 flex justify-center items-center w-full h-screen bg-black bg-opacity-50">
-          <div className="relative p-4 w-full max-w-md bg-white rounded-lg shadow-lg dark:bg-gray-700">
+        <div className="fixed inset-0 z-50 flex justify-center items-center w-full h-screen bg-white bg-opacity-50">
+          <div className="relative p-4 w-full max-w-md bg-white rounded-lg shadow-lg ">
             {/* Close button */}
             <div className="body ">
              <div className="close flex justify-between mb-5">
-                <h1 className="font-bold text-2xl">Comments</h1>
+                <h1 className="font-bold text-2xl ">Comments</h1>
                 <button className=" bg-red-500 rounded text-white py-1 px-3 " onClick={handleModalClose}>close</button></div>
               <div className="show comments">
                 {props.comments.length > 0 ? (
