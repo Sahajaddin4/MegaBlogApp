@@ -2,12 +2,15 @@ import React, { useContext } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { BlogContext } from "../../../contextApi/BlogContextApi";
+import { UserContext } from "../../../contextApi/userAuthContext";
 
 function ShowComment({ comment, fetchcomments }) {
   const{toastStyle}=useContext(BlogContext);
+  const {userId}=useContext(UserContext);
   async function deletecomment(){
     const data = {
       commentId: comment._id,
+      userId:userId
     };
 
  
@@ -17,9 +20,19 @@ function ShowComment({ comment, fetchcomments }) {
           "/api/blog/api/comment/remove-comment",
           { params: data }
         );
-        // console.log(res);
-        await fetchcomments();
-        toast.success("Comment Deleted",toastStyle)
+        if(res.data.success===false)
+        {
+          toast.error(res.data.message,toastStyle);
+          await fetchcomments();
+          return;
+        }
+      
+        else{
+          await fetchcomments();
+          toast.success("Comment Deleted",toastStyle);
+        }
+        
+        
   }
   catch(e){
     console.log(e);
@@ -33,12 +46,14 @@ function ShowComment({ comment, fetchcomments }) {
         <p>{comment.comment}</p>
       </div>
       <div>
+        <button className="float-right " onClick={deletecomment}>
         <i
-          onClick={deletecomment}
-          className="fas fa-comment-slash float-right hover:cursor-pointer"
+          
+          className="fas fa-comment-slash  hover:cursor-pointer"
         />
+        </button>
       </div>
-    </div>
+    </div> 
   );
 }
 

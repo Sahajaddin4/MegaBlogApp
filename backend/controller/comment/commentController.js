@@ -1,114 +1,160 @@
 const Comment = require('../../models/commentModels');
 const Post = require('../../models/postModels');
 
-exports.commentPost =async(req, res)=>{
-    try{
-        const {comment, author, postId} = req.body;
-        
+exports.commentPost = async (req, res) => {
+    try {
+        const { comment, author, userId, postId } = req.body;
+
+        // Ensure post exists before commenting
+        const post = await Post.findById(postId);
+        if (!post) {
+            return res.status(404).json({
+                message: "Post not found",
+            });
+        }
+
         const addComment = new Comment({
-            post : postId,
+            post: postId,
             author,
-            comment
+            userId,
+            comment,
         });
 
         await addComment.save();
 
-        // update comment data in post collection
-        const updateComment = await Post.findByIdAndUpdate(postId, { $push: {comments:addComment._id} }, {new:true})
-            .populate('comments').exec();
+        // Update comment data in the post collection
+        const updateComment = await Post.findByIdAndUpdate(postId, { $push: { comments: addComment._id } }, { new: true })
+            .populate('comments')
+            .exec();
 
-        res.status(200).json({
-            message: "Comment Added Successfully",
-            data: addComment
-        })
-    }
-    catch(error){
-        console.log(error.message)
-        return res.status(500).json({
-            message: "Comment Try error Occured in Comment"
-        })
-    }
-}
-
-//Get All comments
-exports.getAllComments=async (req,res)=>{
-    try {
-        const{postId}=req.query;
-       
-        
-        let response=await Comment.find({post:postId});
-        if(response){
-            return res.status(200).json({
-                message:'Comment fetched succesfully',
-                comments:response
-            })
+        if (!updateComment) {
+            return res.status(400).json({
+                message: "Failed to update Post collection",
+            });
         }
+
         return res.status(200).json({
-            message:'No comments found!!',
-            comments:''
-        })
+            message: "Comment Added Successfully",
+            data: addComment,
+        });
+    } catch (error) {
+        console.log(error.message);
+        return res.status(500).json({
+            message: "Error occurred while adding comment",
+        });
+    }
+};
+
+// Get All comments
+exports.getAllComments = async (req, res) => {
+    try {
+        const { postId } = req.query;
+
+        // Ensure post exists before fetching comments
+        const post = await Post.findById(postId);
+        if (!post) {
+            return res.status(404).json({
+                message: "Post not found",
+                comments: [],
+            });
+        }
+
+        const response = await Comment.find({ post: postId });
+        if (response.length === 0) {
+            return res.status(200).json({
+                message: 'No comments found!!',
+                comments: [],
+            });
+        }
+
+        return res.status(200).json({
+            message: 'Comments fetched successfully',
+            comments: response,
+        });
     } catch (error) {
         console.log(error);
-        
         return res.status(500).json({
-            message:'server error',
-           
-        })
-    }  
-   
-}
-exports.countCommentOfPost=async(req, res)=>{
+            message: 'Server error',
+        });
+    }
+};
+
+// Count comments of a post
+exports.countCommentOfPost = async (req, res) => {
     try {
         const { post } = req.query;
 
+        // Ensure post exists before counting comments
+        const postExists = await Post.findById(post);
+        if (!postExists) {
+            return res.status(404).json({
+                message: "Post not found",
+                countedComment: 0,
+            });
+        }
 
-        let comments = await Comment.find({ post: post });
+        const comments = await Comment.find({ post: post });
 
-        const commentIds = comments.map((comment) => comment._id);
-
-
-        if (commentIds) {
+        if (comments) {
             return res.status(200).json({
                 message: "Comment counted",
-
-                countedComment: commentIds.length
-
-
-            })
+                countedComment: comments.length,
+            });
         }
+
         return res.status(400).json({
-            message: "Failed to count Comments ",
-
-
-        })
+            message: "Failed to count Comments",
+        });
     } catch (error) {
-
         return res.status(500).json({
-            message: "Internal server error found!",
-            error: error
-        })
+            message: "Internal server error",
+            error: error.message,
+        });
     }
-}
+};
 
+// Remove comment
+exports.removeComment = async (req, res) => {
+    try {
+        const { commentId, userId } = req.query;
 
-exports.removeComment=async(req, res)=>{
-    try{
-        const {commentId} = req.query;
+        // Ensure the comment exists and belongs to the user
+        const remComment = await Comment.findOne({ _id: commentId, userId: userId });
+        if (!remComment) {
+            return res.status(403).json({
+                message: "Only the comment owner can delete the comment.",
+                success: false,
+            });
+        }
 
-        const remComment = await Comment.findByIdAndDelete(commentId);
         const postId = remComment.post;
-        const updatedPost = await Post.findByIdAndUpdate(postId,{$pull: {comments: remComment._id}}, {new: true})
-        .populate('comments').exec();
-        
-        res.status(200).json({
-            message: "Commment Deleted Successfully",
-            data: updatedPost
-        })
-    }
-    catch(error){
-        console.log(error.message)
+
+        // Delete the comment from the Comment collection
+        const deletedComment = await Comment.findByIdAndDelete(commentId);
+        if (!deletedComment) {
+            return res.status(404).json({
+                message: "Comment not found or already deleted",
+                success: false,
+            });
+        }
+
+        // Update the Post collection by removing the comment from the comments array
+        const updatedPost = await Post.findByIdAndUpdate(
+            postId,
+            { $pull: { comments: commentId } },
+            { new: true }
+        ).populate('comments').exec();
+
+        return res.status(200).json({
+            success: true,
+            message: "Comment Deleted Successfully",
+            data: updatedPost,
+        });
+    } catch (error) {
+        console.log(error.message);
         return res.status(500).json({
-            message: "Remove Comment Try error Occured in Comment"
-        })
+            success: false,
+            message: "Error occurred while deleting comment",
+        });
     }
-}
+};

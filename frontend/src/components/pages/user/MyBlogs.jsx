@@ -6,20 +6,22 @@ import { toast } from 'react-toastify';
 import { Link } from 'react-router-dom';
 
 
-function MyBlogs({blogs}) {
+function MyBlogs({blogs,getBlogs}) {
   
     
-    const {loader,setLoader,getAllBlogPosts,toastStyle}=useContext(BlogContext);
+    const {loader,setLoader,toastStyle}=useContext(BlogContext);
     async function deleteBlog(postId){
         try {
             setLoader(true);
         let res=await axios.delete(`/api/blog/api/delete-post/${postId}`);
         if(res)
         {
+             getBlogs();
             toast.success("Blog deleted successfully",toastStyle);
             
         }
         else{
+             getBlogs();
             toast.error(res.message,toastStyle);
         }
     
@@ -63,7 +65,6 @@ function MyBlogs({blogs}) {
                                     <td className='border-2 text-center'>{blog.status}</td>
                                     <td onClick={async()=>{
                                         deleteBlog(blog._id);
-                                        await getAllBlogPosts();
                                         setLoader(false);
                                     }} className='border-2 text-center'><button className='bg-red-700 text-white rounded px-2 py-1 m-1 cursor-pointer hover:bg-white hover:text-red-600'>Delete</button></td>
                                 </tr>

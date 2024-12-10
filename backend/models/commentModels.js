@@ -13,7 +13,10 @@ const commentSchema=new mongoose.Schema({
         required:true,
         default:'Anonymous'
     },
-    
+    userId:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:'User'
+    },
    post:{
     type:mongoose.Schema.Types.ObjectId,
     ref:"Post"

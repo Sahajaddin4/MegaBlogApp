@@ -3,14 +3,13 @@ import { UserContext } from '../../../contextApi/userAuthContext';
 import { useNavigate } from 'react-router-dom';
 import { BlogContext } from '../../../contextApi/BlogContextApi';
 import axios from 'axios';
-import { toast } from 'react-toastify';
 import Spinner from '../spinner/Spinner';
 import MyBlogs from './MyBlogs';
 
 function UserDashboard() {
 
     const {isAuthenticated,userId}=useContext(UserContext);
-    const {loader,setLoader,toastStyle}=useContext(BlogContext);
+    const {loader,setLoader}=useContext(BlogContext);
     const [myBlogs,setMyBlogs]=useState([]);
     const navigate=useNavigate();
     
@@ -22,8 +21,7 @@ function UserDashboard() {
             setLoader(false);
         } catch (error) {
             setLoader(false);
-            toast.error("Unable to fetch bloogs",toastStyle);
-            console.log(error);
+            console.log("Unable to fetch bloogs");
             
         }
       };
@@ -36,14 +34,14 @@ function UserDashboard() {
         }
          if(myBlogs.length>0)
         {
-            return <MyBlogs blogs={myBlogs}/>
+            return <MyBlogs getBlogs={getBlogs} blogs={myBlogs}/>
         }
         return <p>No blogs available.</p>;;
       }
  useEffect(()=>{
-    setLoader(false);
+    
      if(!isAuthenticated)
-     {  
+     {  setLoader(false);
         navigate('/user/login');
      }
     getBlogs();

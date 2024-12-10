@@ -7,7 +7,7 @@ import CommentDetails from "./CommentDetails";
 
 function Card({ post }) {
   // Access the current user's authentication context
-  const { isAuthenticated, user } = useContext(UserContext);
+  const { isAuthenticated, user,userId } = useContext(UserContext);
 
 
   // State management
@@ -113,6 +113,7 @@ function Card({ post }) {
     }
     const data = {
       author: user,
+      userId:userId,
       postId: post._id,
       comment: comment,
     };
