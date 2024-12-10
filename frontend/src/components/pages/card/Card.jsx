@@ -7,8 +7,7 @@ import CommentDetails from "./CommentDetails";
 
 function Card({ post }) {
   // Access the current user's authentication context
-  const { isAuthenticated, user,userId } = useContext(UserContext);
-
+  const { isAuthenticated, user, userId } = useContext(UserContext);
 
   // State management
   const [isLiked, setIsLiked] = useState(false); // Track if the post is liked
@@ -18,12 +17,15 @@ function Card({ post }) {
   const [comment, setComment] = useState(""); // Comment input state
   const [loading, setLoading] = useState(false); // Track if like request is in progress
 
-  const [allComments, setAllComments] = useState([]);
-  const [countComment, setCountComment] = useState(1);
-  const [isOpen, setIsOpen] = useState(false);
-  const [closeModal, setCloseModal] = useState(true);
+  const [allComments, setAllComments] = useState([]); // Store all comments for a post
+  const [countComment, setCountComment] = useState(1); // Comment count
+  const [isOpen, setIsOpen] = useState(false); // Track if comments modal is open
+  const [closeModal, setCloseModal] = useState(true); // Modal close state
 
-  
+  // Caching likes and comments count in memory (local state)
+  const [cachedLikes, setCachedLikes] = useState(null);
+  const [cachedComments, setCachedComments] = useState(null);
+
   // Get the toast style from BlogContext
   const { toastStyle } = useContext(BlogContext);
 
@@ -54,18 +56,14 @@ function Card({ post }) {
     try {
       if (isLiked) {
         // Unlike the post
-        const res = await axios.delete(
-          "/api/blog/api/like-dislike/post-dislike",
-          { params: data }
-        );
+        const res = await axios.delete("/api/blog/api/like-dislike/post-dislike", { params: data });
         setIsLiked(res.data.isLiked); // Update the liked state
+        setCachedLikes(null); // Invalidate cache after unlike
       } else {
         // Like the post
-        const res = await axios.post(
-          "/api/blog/api/like-dislike/post-like",
-          data
-        );
+        const res = await axios.post("/api/blog/api/like-dislike/post-like", data);
         setIsLiked(res.data.isLiked); // Update the liked state
+        setCachedLikes(null); // Invalidate cache after like
       }
     } catch (error) {
       toast.error("Failed to like the post", toastStyle); // Handle error
@@ -74,37 +72,40 @@ function Card({ post }) {
     }
   };
 
-  // Fetch if the post is liked by the current user
-  async function getLike(post, author) {
-    const data = { post, author };
-
-    let res = await axios.get("/api/blog/api/like-dislike/get-like", {
-      params: data,
-    });
-
-    setIsLiked(res.data.isLiked); // Update liked state based on response
-  }
-
-  // Fetch total like count
+  // Fetch total like count with caching
   async function getAllLike(post) {
+    if (cachedLikes !== null) {
+      setCountLike(cachedLikes); // Use cached value
+      return;
+    }
+
     let res = await axios.get("/api/blog/api/like-dislike/get-like-count", {
       params: { post },
     });
     setCountLike(res.data.countedLike); // Update like count
+    setCachedLikes(res.data.countedLike); // Cache the like count in memory
   }
 
-  // Run these functions on component mount and on `handleLike` change
+  // Run these functions on component mount
   useEffect(() => {
-    getLike(post._id, user);
-    getAllLike(post._id);
-  }, [handleLike]);
+    getLike(post._id, user); // Check if the post is liked by the user
+    getAllLike(post._id); // Get the like count
+  }, [post._id, user]);
+
+  // Fetch like status for a post
+  async function getLike(post, author) {
+    const data = { post, author };
+    let res = await axios.get("/api/blog/api/like-dislike/get-like", { params: data });
+    setIsLiked(res.data.isLiked); // Update liked state based on response
+  }
 
   // Truncate description when not expanded
   useEffect(() => {
     truncateDesc();
   }, [isExpanded]);
 
-  // --------------------------Commments-------------------------------------
+  // -------------------------- Comments -----------------------------
+
   // Handle comment submission
   const handleComment = async () => {
     if (comment === "") {
@@ -113,7 +114,7 @@ function Card({ post }) {
     }
     const data = {
       author: user,
-      userId:userId,
+      userId: userId,
       postId: post._id,
       comment: comment,
     };
@@ -122,9 +123,8 @@ function Card({ post }) {
       // Add comment
       const res = await axios.post("/api/blog/api/comment/add-comment", data);
       toast.success(res.data.message, toastStyle);
-      setCountComment(res.data.isComment); // Update comment state
-
-      // }
+      setCountComment(res.data.isComment); // Update comment count
+      setCachedComments(null); // Invalidate cache after adding a new comment
     } catch (error) {
       toast.error("Server error!", toastStyle); // Handle error
     } finally {
@@ -132,32 +132,40 @@ function Card({ post }) {
     }
   };
 
+  // Fetch all comments for a post with caching
   async function fetchcomments() {
-    const postDetails = {
-      postId: post._id,
-    };
-    let res = await axios.get("/api/blog/api/comment/get-all-comments", {
-      params: postDetails,
-    });
-    setAllComments(res.data.comments);
+    if (cachedComments !== null) {
+      setAllComments(cachedComments); // Use cached comments if available
+      return;
+    }
+
+    const postDetails = { postId: post._id };
+    let res = await axios.get("/api/blog/api/comment/get-all-comments", { params: postDetails });
+    setAllComments(res.data.comments); // Update all comments
+    setCachedComments(res.data.comments); // Cache the comments in memory
   }
+
   const showComments = async () => {
     await fetchcomments();
     setIsOpen(true);
     setCloseModal(false);
   };
+
   async function getAllComment(post) {
+    if (cachedComments !== null) {
+      setCountComment(cachedComments.length); // Use cached comments count
+      return;
+    }
+
     let res = await axios.get("/api/blog/api/comment/get-comment-count", {
       params: { post },
     });
-
-
-    setCountComment(res.data.countedComment); // Update Comment count
+    setCountComment(res.data.countedComment); // Update comment count
   }
 
-  // Run these functions on component mount and on `handleComment` change
+  // Run these functions on component mount and when comment is added
   useEffect(() => {
-    getAllComment(post._id);
+    getAllComment(post._id); // Get the comment count
   }, [handleComment]);
 
   return (
@@ -245,7 +253,8 @@ function Card({ post }) {
             <i
               onClick={showComments}
               className="fa-regular fa-comment hover:cursor-pointer"
-            ></i><span className="mx-1">{countComment}</span>
+            ></i>
+            <span className="mx-1">{countComment}</span>
           </span>
 
           {/* Modals for showing comments */}
