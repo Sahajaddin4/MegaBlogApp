@@ -53,10 +53,12 @@ export default function BlogContextProvider({ children }) {
       totalPages,
       rejectedPosts,
       toastStyle,
+      setRejecetedPosts,
+      setPendingPosts,
       setLoader,
       getAllBlogPosts, 
     
-  }),[getAllBlogPosts,totalPages]);
+  }),[getAllBlogPosts]);
 
   return <BlogContext.Provider value={value}>{children}</BlogContext.Provider>;
 }

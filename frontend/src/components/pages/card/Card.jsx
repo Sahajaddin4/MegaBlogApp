@@ -18,12 +18,12 @@ function Card({ post }) {
   const [loading, setLoading] = useState(false); // Track if like request is in progress
 
   const [allComments, setAllComments] = useState([]); // Store all comments for a post
-  const [countComment, setCountComment] = useState(1); // Comment count
+  const [countComment, setCountComment] = useState(post.comments.length); // Comment count
   const [isOpen, setIsOpen] = useState(false); // Track if comments modal is open
   const [closeModal, setCloseModal] = useState(true); // Modal close state
-
+   
   // Caching likes and comments count in memory (local state)
-  const [cachedLikes, setCachedLikes] = useState(null);
+  
   const [cachedComments, setCachedComments] = useState(null);
 
   // Get the toast style from BlogContext
@@ -58,12 +58,14 @@ function Card({ post }) {
         // Unlike the post
         const res = await axios.delete("/api/blog/api/like-dislike/post-dislike", { params: data });
         setIsLiked(res.data.isLiked); // Update the liked state
-        setCachedLikes(null); // Invalidate cache after unlike
+        setCountLike(countLike-1);
+       
       } else {
         // Like the post
         const res = await axios.post("/api/blog/api/like-dislike/post-like", data);
         setIsLiked(res.data.isLiked); // Update the liked state
-        setCachedLikes(null); // Invalidate cache after like
+        setCountLike(countLike+1);
+        
       }
     } catch (error) {
       toast.error("Failed to like the post", toastStyle); // Handle error
@@ -72,25 +74,12 @@ function Card({ post }) {
     }
   };
 
-  // Fetch total like count with caching
-  async function getAllLike(post) {
-    if (cachedLikes !== null) {
-      setCountLike(cachedLikes); // Use cached value
-      return;
-    }
-
-    let res = await axios.get("/api/blog/api/like-dislike/get-like-count", {
-      params: { post },
-    });
-    setCountLike(res.data.countedLike); // Update like count
-    setCachedLikes(res.data.countedLike); // Cache the like count in memory
-  }
-
+ 
   // Run these functions on component mount
   useEffect(() => {
     getLike(post._id, user); // Check if the post is liked by the user
-    getAllLike(post._id); // Get the like count
-  }, [post._id, user]);
+   
+  }, []);
 
   // Fetch like status for a post
   async function getLike(post, author) {
@@ -123,7 +112,7 @@ function Card({ post }) {
       // Add comment
       const res = await axios.post("/api/blog/api/comment/add-comment", data);
       toast.success(res.data.message, toastStyle);
-      setCountComment(res.data.isComment); // Update comment count
+      setCountComment(countComment+1); // Update comment count
       setCachedComments(null); // Invalidate cache after adding a new comment
     } catch (error) {
       toast.error("Server error!", toastStyle); // Handle error
@@ -151,22 +140,7 @@ function Card({ post }) {
     setCloseModal(false);
   };
 
-  async function getAllComment(post) {
-    if (cachedComments !== null) {
-      setCountComment(cachedComments.length); // Use cached comments count
-      return;
-    }
 
-    let res = await axios.get("/api/blog/api/comment/get-comment-count", {
-      params: { post },
-    });
-    setCountComment(res.data.countedComment); // Update comment count
-  }
-
-  // Run these functions on component mount and when comment is added
-  useEffect(() => {
-    getAllComment(post._id); // Get the comment count
-  }, [handleComment]);
 
   return (
     <div className="p-4 flex flex-col gap-3 bg-blue-100 rounded shadow-md">
