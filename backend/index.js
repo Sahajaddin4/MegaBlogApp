@@ -18,8 +18,11 @@ const path = require('path');
 dbConnect();
 
 //Parsing json data  middleware
-const logStreams=fs.createWriteStream(path.join(__dirname,'/System-logs/access.log'),{flags:'a'});
+let logFile=path.join(__dirname,'/System-logs/access.log')
+const logStreams=fs.createWriteStream(logFile,{flags:'a'});
+
 // Custom log format (JSON)
+
 morgan.token('json', function (req, res) {
     return JSON.stringify({
       method: req.method,
@@ -30,6 +33,20 @@ morgan.token('json', function (req, res) {
       ip: req.ip,
     });
   });
+
+  const clearLogFile = async () => {
+    try {
+      // Truncate the log file (clear content)
+      await fs.promises.truncate(logFile, 0);
+      
+    } catch (err) {
+      console.error('Error clearing the log file:', err);
+    }
+  };
+const TIME_LIMIT=24*60*60*1000;
+  setInterval(()=>{
+    clearLogFile();
+  },TIME_LIMIT)
 app.use(morgan(':json',{stream:logStreams}));
 app.use(express.json());
 app.use(cookie());

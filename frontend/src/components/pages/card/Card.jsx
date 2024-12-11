@@ -170,7 +170,7 @@ function Card({ post }) {
             </span>
           </p>
         ) : (
-          <p>
+          <p> 
             {post.body}
             <span
               onClick={toggleExpand}
