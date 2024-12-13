@@ -35,7 +35,7 @@ function Home() {
               { posts.map((post)=>{
                 return <div key={post._id} className='mb-2'> <Card  post={post} /></div>
               })}
-              <div className="pagination fixed bottom-0 w-[78%] my-2 flex justify-between">
+              <div className="pagination fixed bottom-0 w-[78%] my-2 flex gap-5">
                 {
                   currentPage!==1?<div className="previous">
                   <button onClick={handlePrevPage} className='py-1  px-3 border-2 mt-2 rounded '>Previous</button>
