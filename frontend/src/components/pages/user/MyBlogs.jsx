@@ -3,11 +3,11 @@ import React, { useContext } from 'react'
 import { BlogContext } from '../../../contextApi/BlogContextApi'
 import Spinner from '../spinner/Spinner';
 import { toast } from 'react-toastify';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 
 function MyBlogs({blogs,getBlogs}) {
-  
+  const navigate=useNavigate();
     
     const {loader,setLoader,toastStyle}=useContext(BlogContext);
     async function deleteBlog(postId){
@@ -33,7 +33,9 @@ function MyBlogs({blogs,getBlogs}) {
         }
     }
 
-
+function show(id){
+   navigate(`/blog/${id}`);
+}
     
     
   return (
@@ -57,7 +59,7 @@ function MyBlogs({blogs,getBlogs}) {
                         blogs.map((blog) => {
                             return (
                                 <tr key={blog._id}>
-                                    <td className='border-2 text-center cursor-pointer'><Link to={`/user/my-blog/${blog._id}`}>{blog.title}</Link></td>
+                                    <td className='border-2 text-center cursor-pointer' onClick={()=>show(blog._id)}>{blog.title}</td>
                                     <td className='border-2 text-center'>{blog.likes.length}</td>
                                     <td className='border-2 text-center'>{blog.comments.length}</td>
                                     <td className='border-2 text-center'> {new Date(blog.updatedAt).toLocaleString()}</td>

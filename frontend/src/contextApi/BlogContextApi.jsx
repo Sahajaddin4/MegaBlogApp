@@ -28,7 +28,7 @@ export default function BlogContextProvider({ children }) {
       user="1" ;  
     }
    try {
-    let url=`/api/blog/api/get-all-posts/${user}?page=${currentPage}&limit=${5}`;
+    let url=`/api/blog/api/get-all-posts/${user}?page=${currentPage}&limit=${6}`;
     setLoader(true);
     let getposts = await axios.get(url);
     let tempPosts=getposts.data.data.filter((post)=>post.status==="active");

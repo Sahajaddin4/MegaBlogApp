@@ -1,35 +1,57 @@
-import React, { useContext, useEffect, useState } from "react";
-import { BlogContext } from "../../../contextApi/BlogContextApi";
-import axios from "axios";
-import { UserContext } from "../../../contextApi/userAuthContext";
-import { toast } from "react-toastify";
-import CommentDetails from "./CommentDetails";
-import { Link } from "react-router-dom";
+import React, { useContext, useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import CommentDetails from './CommentDetails';
+import { BlogContext } from '../../../contextApi/BlogContextApi';
+import { UserContext } from '../../../contextApi/userAuthContext';
+import Spinner from '../spinner/Spinner';
+import axios from 'axios';
+import { toast } from 'react-toastify';
 
-function Card({ post }) {
-  const { isAuthenticated, user, userId } = useContext(UserContext);
+function ShowBlog() {
+  // Sample data - You would probably fetch this from an API
+  const { id } = useParams(); // Get the postId from the URL
+// State management
+const [isLiked, setIsLiked] = useState(false); 
+const [countLike, setCountLike] = useState(0);
 
-  // State management
-  const [isLiked, setIsLiked] = useState(false); 
-  const [countLike, setCountLike] = useState(post.likes.length);
-  const [comment, setComment] = useState(""); 
-  const [loading, setLoading] = useState(false); 
+const [comment, setComment] = useState(""); 
+const [loading, setLoading] = useState(false); 
 
-  const [allComments, setAllComments] = useState([]); 
-  const [countComment, setCountComment] = useState(post.comments.length);
-  const [isOpen, setIsOpen] = useState(false); 
-  const [closeModal, setCloseModal] = useState(true); 
+const [allComments, setAllComments] = useState([]); 
+const [countComment, setCountComment] = useState(0);
+const [isOpen, setIsOpen] = useState(false); 
+const [closeModal, setCloseModal] = useState(true); 
 
-  const [cachedComments, setCachedComments] = useState(null);
+const [cachedComments, setCachedComments] = useState(null);
+const navigate=useNavigate();
+const { toastStyle ,setLoader} = useContext(BlogContext);
+  const [post,setPost]=useState();
+  // Sample blog data based on postId
+  const getMyBlog=async()=>{
+    try {
+        setLoader(true)
+       let res= await axios.get(`/api/blog/api/get-blog/${id}`);
+      
+       if(res){
+ 
+        setPost(res.data.blog);
+         setCountComment(res.data.blog.comments.length);
+         setCountLike(res.data.blog.likes.length);  
+       }
+       
+    } catch (error) {
+       console.log(error);
+       
+    }
+     setLoader(false);
+ }
+ const { isAuthenticated, user, userId } = useContext(UserContext);
 
-  const { toastStyle } = useContext(BlogContext);
-
-
-
+  
   const handleLike = async () => {
     if (loading) return;
 
-    const data = { author: user, postId: post._id };
+    const data = { author: user, postId: id };
 
     setLoading(true); 
 
@@ -51,7 +73,12 @@ function Card({ post }) {
   };
 
   useEffect(() => {
-    getLike(post._id, user); 
+    if(isAuthenticated)
+        {
+            getLike(id, user);
+
+        } 
+      getMyBlog();
   }, []);
 
   async function getLike(post, author) {
@@ -60,7 +87,7 @@ function Card({ post }) {
     setIsLiked(res.data.isLiked);
   }
 
-
+  
 
   const handleComment = async () => {
     if (comment === "") {
@@ -68,7 +95,7 @@ function Card({ post }) {
       return;
     }
 
-    const data = { author: user, userId: userId, postId: post._id, comment: comment };
+    const data = { author: user, userId: userId, postId: id, comment: comment };
 
     try {
       const res = await axios.post("/api/blog/api/comment/add-comment", data);
@@ -88,10 +115,11 @@ function Card({ post }) {
       return;
     }
 
-    const postDetails = { postId: post._id };
+    const postDetails = { postId: id };
     let res = await axios.get("/api/blog/api/comment/get-all-comments", { params: postDetails });
     setAllComments(res.data.comments);
     setCachedComments(res.data.comments);
+    
   }
 
   const showComments = async () => {
@@ -100,8 +128,17 @@ function Card({ post }) {
     setCloseModal(false);
   };
 
+  function handleBackButton()
+  {
+   navigate(-1);
+  }
   return (
-    <div className="w-full md:w-[45vw] lg:w-[35vw]  h-[38vh] bg-white border border-gray-200 rounded-lg shadow-md dark:bg-gray-800 dark:border-gray-700 p-4 flex flex-col">
+    <>
+    {
+      !post?<Spinner/>:(
+       <div className='mt-10'>
+        <button className='bg-blue-600 hover:bg-white hover:text-blue-500 px-2 py-1 rounded text-white' onClick={handleBackButton}>Back</button>
+         <div className="w-full mt-5 bg-white border border-gray-200 rounded-lg shadow-md dark:bg-gray-800 dark:border-gray-700 p-4 flex flex-col">
       {/* Title and Author section */}
       <div className="flex justify-between items-center mb-4">
         <p className="text-2xl font-semibold text-gray-900 dark:text-white">{post.title}</p>
@@ -113,15 +150,10 @@ function Card({ post }) {
         <h1 className="text-xl font-medium text-gray-700 dark:text-gray-400">Description:</h1>
        
           <p className="text-gray-600 dark:text-gray-300">
-            {post.body.substring(0,100)}
-            <Link to={`blog/${post._id}`} ><button
-             
-             className="text-blue-600 hover:text-blue-800 font-semibold ml-2"
-           >
-             .read more..
-           </button></Link>
+            {post.body}
+           
           </p>
-    
+       
       </div>
 
       {/* Like and Comment section at the bottom */}
@@ -187,7 +219,11 @@ function Card({ post }) {
         </div>
       )}
     </div>
+      
+       </div>)
+    }
+    </>
   );
 }
 
-export default Card;
+export default ShowBlog;

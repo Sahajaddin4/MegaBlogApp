@@ -10,7 +10,7 @@ const router=require('express').Router();
 //Get Routes
 router.get('/get-all-posts/:id',getAllPosts);
 router.get('/get-my-blogs/:id',auth,getMyBlogs);
-router.get('/get-blog/:id',auth,getOneBlog);
+router.get('/get-blog/:id',getOneBlog);
 //Post routes
 router.post('/create-post',auth, createPost);
 

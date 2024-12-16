@@ -44,7 +44,7 @@ function UserDashboard() {
      {  setLoader(false);
         navigate('/user/login');
      }
-    getBlogs();
+    else getBlogs();
  },[isAuthenticated])
     
     return (

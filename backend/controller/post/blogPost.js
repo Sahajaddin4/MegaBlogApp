@@ -241,12 +241,7 @@ exports.getMyBlogs=async(req,res)=>{
 exports.getOneBlog=async(req,res)=>{
     try {
         const blogId=req.params.id;
-        const {userType}=req.body;
-        if(userType!=="user"){
-          return res.status(401).json({
-              message:"Only user can get his blogs."
-          })
-        }
+       
         let blog=await Post.findById(blogId);
         if(!blog)
         {

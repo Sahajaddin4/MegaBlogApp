@@ -8,7 +8,8 @@ import SignUp from "./components/pages/auth_pages/SignUp";
 import Contact from "./components/pages/Contact";
 import Admin from "./components/pages/admin/Admin";
 import UserDashboard from "./components/pages/user/UserDashboard";
-import ShowMyBlog from "./components/pages/user/ShowMyBlog";
+
+import ShowBlog from "./components/pages/card/ShowBlog";
 
 function App() {
   return (
@@ -18,13 +19,12 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="admin" element={<Admin />}/>
         <Route path="user" element={<UserDashboard />}/>
-        <Route path="user/my-blog/:id" element={<ShowMyBlog />} />
         <Route path="about" element={<About />} />
         <Route path="create-blog" element={<CreateBlog />}/>
         <Route path="user/login" element={<Login />} />
         <Route path="user/signup" element={<SignUp/>} />
         <Route path="admin-contact" element={<Contact />} />
-        
+        <Route path="blog/:id" element={<ShowBlog />}/>
         </Route>
       </Routes>
     </div>
