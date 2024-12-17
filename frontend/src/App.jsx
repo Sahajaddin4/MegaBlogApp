@@ -13,7 +13,7 @@ import ShowBlog from "./components/pages/card/ShowBlog";
 
 function App() {
   return (
-    <div className="app bg-gradient-to-r from-blue-grey-light via-blue-grey-dark to-white rounded-lg  mx-auto p-4 min-h-screen">
+    <div className="app bg-white rounded-lg  mx-auto p-4 min-h-screen">
       <Routes>
         <Route path="/" element={<Layout />}>
         <Route path="/" element={<Home />} />
