@@ -22,7 +22,7 @@ function Admin() {
     showUsers: true,
     rejected: false
   });
-
+  
   const navigate = useNavigate();
 
   // Active user account

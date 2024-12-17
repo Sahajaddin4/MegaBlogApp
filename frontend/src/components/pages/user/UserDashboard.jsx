@@ -34,7 +34,7 @@ function UserDashboard() {
         }
          if(myBlogs.length>0)
         {
-            return <MyBlogs getBlogs={getBlogs} blogs={myBlogs}/>
+            return <MyBlogs getBlogs={getBlogs} setBlogs={setMyBlogs} blogs={myBlogs}/>
         }
         return <p>No blogs available.</p>;;
       }

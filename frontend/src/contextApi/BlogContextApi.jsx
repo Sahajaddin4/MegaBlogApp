@@ -8,6 +8,7 @@ export default function BlogContextProvider({ children }) {
   const [pendingPosts,setPendingPosts]=useState([]);
   const [rejectedPosts,setRejecetedPosts]=useState([]);
   const [loader, setLoader] = useState(true);
+  const [currentPage,setCurrentPage]=useState(1);
   const {userType}=useContext(UserContext);
  
   const [totalPages,setTotalPages]  =useState(1);
@@ -22,7 +23,7 @@ export default function BlogContextProvider({ children }) {
     theme: "light",    
    
   };
-  async function getAllBlogPosts(currentPage) {
+  async function getAllBlogPosts() {
     let user="0";
     if(userType==="admin"){
       user="1" ;  
@@ -49,6 +50,8 @@ export default function BlogContextProvider({ children }) {
       posts,
       setPosts,
       loader,
+      setCurrentPage,
+      currentPage,
       pendingPosts,
       totalPages,
       rejectedPosts,

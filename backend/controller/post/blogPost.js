@@ -216,7 +216,7 @@ exports.getMyBlogs=async(req,res)=>{
                 message:"Only user can get his blogs."
             })
           }
-          let blogs=await Post.find({userId:userId});
+          let blogs=await Post.find({userId:userId}).sort({createdAt:-1});
           if(!blogs)
           {
             return res.status(400).json({
