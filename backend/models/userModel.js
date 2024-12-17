@@ -29,6 +29,16 @@ const userSchema = new mongoose.Schema({
     password:{
         type:String,
         required:true
+    },
+    refreshToken:{
+        type:String,
+        required:false,
+        default:null
+    },
+    expirationTime:{
+        type:Date,
+        required:false,
+        default:null
     }
 });
 

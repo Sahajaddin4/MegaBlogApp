@@ -29,6 +29,10 @@ function Navbar() {
   function handleLogout() {
     setIsAuthencticated('');
     Cookies.remove('token');
+    Cookies.remove('refreshToken');
+    Cookies.remove('user');
+    Cookies.remove('userId');
+    Cookies.remove('userType');
     toast.warning('Logout successfull', toastStyle);
     navigate('/');
   }

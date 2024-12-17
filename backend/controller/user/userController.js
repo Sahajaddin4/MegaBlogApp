@@ -81,7 +81,7 @@ exports.userSignup = async(req,res)=>{
             name,
             email,
             phone,
-            password:hashPassword
+            password:hashPassword,
         })
       
         
@@ -140,21 +140,30 @@ exports.userLogin=async(req,res)=>{
                 isAuth: true,
                 name: user.name
             }
-
+            const refreshPayload={
+                id:user._id
+            }
+            
             const token = jwt.sign(payload, process.env.JWT_SECRET_KEY, { expiresIn: "2h" })
-
+            const refreshToken=jwt.sign(refreshPayload,process.env.JWT_REFRESH_SECRET_KEY,{expiresIn:'60d'})
             const options = {
-                expires : new Date(Date.now() + 3 * 60* 60 *1000),
+                expires : new Date(Date.now() + 2 * 60* 60 *1000),
                 
             }
+            user.refreshToken=refreshToken;
+            user.expirationTime=Date.now()+60 * 24 * 60 * 60 * 1000;
 
-            res.cookie("token", token, options).status(200).json({
-                    success:true,
-                    user:user.name,
-                    userType:user.userType,
-                    token:token,
-                    message:"Login successful..."
-                })
+            await user.save();
+            
+            res.cookie("token", token, options);
+            res.cookie("refreshToken",refreshToken,new Date(Date.now() + 60 * 24 * 60 * 60 * 1000));
+            return res.status(200).json({
+                success:true,
+                user:user.name,
+                userType:user.userType,
+                token:token,
+                message:"Login successful..."
+            })
           
         }
         else{
