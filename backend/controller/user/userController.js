@@ -148,10 +148,11 @@ exports.userLogin=async(req,res)=>{
             const refreshToken=jwt.sign(refreshPayload,process.env.JWT_REFRESH_SECRET_KEY,{expiresIn:'60d'})
             const options = {
                 expires : new Date(Date.now() + 2 * 60* 60 *1000),
+                //expires:new Date(Date.now()+2*60*1000)
                 
             }
             user.refreshToken=refreshToken;
-            user.expirationTime=Date.now()+60 * 24 * 60 * 60 * 1000;
+            user.expireRefreshToken=Date.now()+60 * 24 * 60 * 60 * 1000;
 
             await user.save();
             
@@ -276,3 +277,49 @@ exports.activateUser=async(req,res)=>{
         })
        }
 }
+
+
+exports.logOut = async (req, res) => {
+    try {
+        // Get the user ID from the cookies
+        const { id } = req.body;
+         console.log(id);
+         
+        // Check if the ID exists
+        if (!id) {
+            return res.status(400).json({
+                message: 'Bad request! User ID not found in cookies.',
+            });
+        }
+
+        // Find the user and update the refresh token and expiration time
+        const user = await User.findByIdAndUpdate(id, { 
+            refreshToken: "", 
+            expireRefreshToken: null 
+        });
+
+        // Check if the user exists
+        if (!user) {
+            return res.status(400).json({
+                message: 'User not found.',
+            });
+        }
+
+        // Clear the cookies on the client side
+        res.clearCookie('token');
+        res.clearCookie('refreshToken');
+
+        // Respond with success
+        return res.status(200).json({
+            success: true,
+            message: "Logout successful",
+        });
+    } catch (error) {
+        console.error('Logout error:', error);
+        return res.status(500).json({
+            success: false,
+            error: error,
+            message: "Server error during logout",
+        });
+    }
+};

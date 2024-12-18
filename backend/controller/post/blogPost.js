@@ -35,11 +35,12 @@ exports.getAllPosts=async(req,res)=>{
         const skip=(page-1)*limit;
         if(user==="1"){
             const [totalCount, posts] = await Promise.all([
-                Post.countDocuments(), // Get the total count of documents
-                Post.find({}) // Fetch the paginated posts
+                Post.find({status:"active"}).countDocuments(), // Get the total count of documents
+                Post.find({status:"active"}) // Fetch the paginated posts
                   .sort({ createdAt: -1 })
                   .skip(skip)
-                  .limit(limit)
+                  .limit(limit),
+                
               ]);
               
               const totalPage = Math.ceil(totalCount / limit);
@@ -49,7 +50,7 @@ exports.getAllPosts=async(req,res)=>{
         return res.status(200).json({
             message:'Post fetched  succesfully',
             data:posts,
-            totalPage
+            totalPage   
         })
         }
         else if(user==="0"){
@@ -262,4 +263,97 @@ exports.getOneBlog=async(req,res)=>{
           error:error
       })
   }
+}
+
+exports.pendingBlogs=async(req,res)=>{
+    try {
+        const userType=req.body.userType;
+       
+        
+        const limit =parseInt(req.query.limit) || 4;
+        const page =parseInt(req.query.page) || 1;
+        const skip=(page-1)*limit;
+        if(userType==="admin"){
+            const [totalCount,pendingApproval] = await Promise.all([
+                Post.find({approved:false,status:'active'}).countDocuments(), // Get the total count of documents
+                Post.find({approved:false,status:"active"}) // Fetch the paginated posts
+                  .sort({ createdAt: -1 })
+                  .skip(skip)
+                  .limit(limit),
+                 
+              ]);
+              
+              const totalPage = Math.ceil(totalCount / limit);
+           
+            
+            
+        return res.status(200).json({
+            message:'Post fetched  succesfully',
+            totalPage,
+            pendingApproval,
+          
+        })
+        }
+        else
+            {
+              return res.status(401).json({
+                  message:'Only admin can get this details',
+                  success:false
+                })
+            }
+
+    } catch (error) {
+          
+      return res.status(500).json({
+        message:"Internal server error found!",
+        error:error
+    })
+    }
+}
+
+
+exports.rejectedBlogs=async(req,res)=>{
+    try {
+        const userType=req.body.userType;
+       
+        
+        const limit =parseInt(req.query.limit) || 5;
+        const page =parseInt(req.query.page) || 1;
+        const skip=(page-1)*limit;
+        if(userType==="admin"){
+            const [totalCount,rejectedPosts] = await Promise.all([
+                Post.find({approved:false,status:'rejected'}).countDocuments(), // Get the total count of documents
+                Post.find({approved:false,status:"rejected"}) // Fetch the paginated posts
+                  .sort({ createdAt: -1 })
+                  .skip(skip)
+                  .limit(limit),
+                 
+              ]);
+              
+              const totalPage = Math.ceil(totalCount / limit);
+           
+            
+            
+        return res.status(200).json({
+            message:'Post fetched  succesfully',
+            totalPage,
+            rejectedPosts,
+          
+        })
+        }
+        else
+            {
+              return res.status(401).json({
+                  message:'Only admin can get this details',
+                  success:false
+                })
+            }
+
+    } catch (error) {
+          
+      return res.status(500).json({
+        message:"Internal server error found!",
+        error:error
+    })
+    }
 }

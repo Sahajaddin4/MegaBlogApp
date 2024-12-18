@@ -6,6 +6,7 @@ import { UserContext } from "../../../contextApi/userAuthContext";
 import { toast } from "react-toastify";
 import Cookies from 'js-cookie';
 import { BlogContext } from "../../../contextApi/BlogContextApi";
+import axios from "axios";
 function Navbar() {
 
   const { isAuthenticated, user, setIsAuthencticated, userType } = useContext(UserContext);
@@ -26,15 +27,24 @@ function Navbar() {
     return null;
   }
   //handle logout
-  function handleLogout() {
-    setIsAuthencticated('');
-    Cookies.remove('token');
-    Cookies.remove('refreshToken');
-    Cookies.remove('user');
-    Cookies.remove('userId');
-    Cookies.remove('userType');
-    toast.warning('Logout successfull', toastStyle);
-    navigate('/');
+  async function handleLogout() {
+    const res = await axios.post('/api/blog/api/user/log-out');
+    if(res)
+    {
+
+      setIsAuthencticated('');
+      Cookies.remove('token');
+      Cookies.remove('refreshToken');
+      Cookies.remove('user');
+      Cookies.remove('userId');
+      Cookies.remove('userType');
+      toast.warning('Logout successfull', toastStyle);
+      navigate('/');
+    }
+   else{
+    toast.error("Failed to logout",toastStyle);
+   }
+    
   }
   return (
     <div className="navbar">

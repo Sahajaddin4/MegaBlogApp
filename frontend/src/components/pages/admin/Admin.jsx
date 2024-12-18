@@ -8,11 +8,12 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import PendingPosts from './PendingPosts';
 import RejecetedPosts from './RejecetedPosts';
+import PaginationNumber from './Pagination';
 
 
 function Admin() {
   // Destructuring necessary data and functions from BlogContext and UserContext
-  const { loader, setLoader, toastStyle,setPendingPosts,setRejecetedPosts,posts, getAllBlogPosts, rejectedPosts, pendingPosts } = useContext(BlogContext);
+  const { loader, setLoader, toastStyle,setPendingPosts,setRejectedPosts,pendingState,setRejectedState,rejectedState,getRejected,getPending,setPendingState, rejectedPosts, pendingPosts } = useContext(BlogContext);
   const { isAuthenticated, userType } = useContext(UserContext);
   
   // Single state object to manage all UI states
@@ -23,6 +24,7 @@ function Admin() {
     rejected: false
   });
   
+
   const navigate = useNavigate();
 
   // Active user account
@@ -80,26 +82,32 @@ function Admin() {
 
   // Approve rejected posts
   const approveRejectedPosts = async (postId) => {
-    let res = await axios.put(`/api/blog/api/rejected-blog-approve/${postId}`);
-    if (res.status===200) {
-      setRejecetedPosts(prevState=>{
-        return prevState.filter(post=>post._id!==postId);
-      });
-     
-      toast.success('Approved rejected post', toastStyle);
-    } else {
-      toast.error('Server error!', toastStyle);
+    try {
+      const res = await axios.put(`/api/blog/api/rejected-blog-approve/${postId}`);
+      
+      if (res.status === 200) {
+        // Remove the post from rejectedPosts state after approving it
+        setRejectedPosts((prevState) => {
+          return prevState.filter(post => post._id !== postId);
+        });
+        
+        toast.success('Approved rejected post', toastStyle);
+      } else {
+        toast.error('Error approving rejected post', toastStyle);
+      }
+    } catch (error) {
+      console.log('Server error', error);
+      toast.error('Error with server!', toastStyle);
     }
   };
+  
 
   // Reject post
   const postRejected = async (postId) => {
     let res = await axios.put(`/api/blog/api/blog-rejected/${postId}`);
     if (res) {
      
-      setRejecetedPosts(()=>{
-        return posts.map(post=>post._id===postId?{...post,status:"rejected"}:post)
-      });
+    
       setPendingPosts(prevState=>{
         return prevState.filter(post=>post._id!==postId);
       });
@@ -124,33 +132,33 @@ function Admin() {
     }
   };
 
-  // Fetch posts
-  const fetchPosts = async (currentPage) => {
-    await getAllBlogPosts(currentPage);
-  };
+ 
 
   // Fetch pending posts
-  const fetchpendingPosts = () => {
-    fetchPosts();
+  const fetchpendingPosts =useCallback( () => {
+    getPending();
     setState(prevState => ({
       ...prevState,
       rejected: false,
       showUsers: false,
       pending: true
     }));
-  };
+  },[pendingState.page]);
 
   // Fetch rejected posts
-  const fetchRejectedPosts = () => {
-    fetchPosts();
+  const fetchRejectedPosts = useCallback(() => {
+    
+    getRejected();
     setState(prevState => ({
       ...prevState,
       showUsers: false,
       pending: false,
       rejected: true
     }));
-  };
+  },[rejectedState.page]);
 
+  //pagination 
+ 
   // Render content based on the current state
   const renderContent = () => {
     if (state.showUsers) {
@@ -160,10 +168,13 @@ function Admin() {
         'No user found'
       );
     }
-
+ 
+ 
     if (state.pending) {
       return pendingPosts.length > 0 ? (
-        <PendingPosts postApproved={postApproved} postRejected={postRejected} posts={pendingPosts} />
+        <div><PendingPosts postApproved={postApproved} postRejected={postRejected} posts={pendingPosts} />
+        <div className="pagination fixed bottom-0 mb-10"><PaginationNumber totalpages={pendingState.totalPage} setCurrentState={setPendingState} currentPage={pendingState.page}/></div>
+        </div>
       ) : (
         'No pending posts'
       );
@@ -171,7 +182,10 @@ function Admin() {
 
     if (state.rejected) {
       return rejectedPosts.length > 0 ? (
-        <RejecetedPosts approveRejectedPosts={approveRejectedPosts} posts={rejectedPosts} />
+        <div>
+          <RejecetedPosts approveRejectedPosts={approveRejectedPosts} />
+          <div className="pagination fixed bottom-0 mb-10"><PaginationNumber totalpages={rejectedState.totalPage} setCurrentState={setRejectedState} currentPage={rejectedState.page}/></div>
+        </div>
       ) : (
         'No rejected posts.'
       );

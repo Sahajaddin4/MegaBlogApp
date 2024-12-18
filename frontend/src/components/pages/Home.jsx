@@ -1,11 +1,11 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect } from 'react';
 import Card from './card/Card';
 import { BlogContext } from '../../contextApi/BlogContextApi';
 import Spinner from './spinner/Spinner';
 
 function Home() {
     const { getAllBlogPosts, currentPage, setCurrentPage, posts, totalPages, loader } = useContext(BlogContext);
-    const [isActive,setIsActive]=useState(false);
+   
     const fetchPosts = async () => {
         await getAllBlogPosts();
     };
@@ -13,6 +13,7 @@ function Home() {
     useEffect(() => {
         fetchPosts();
     }, [currentPage]);
+
 
     const paginationNumber = () => {
         return Array.from({ length: totalPages }, (_, index) => {
@@ -22,7 +23,7 @@ function Home() {
                     className={`p-1 m-1 ${isActive ? 'bg-green-500 px-3' : 'text-blue-500 px-3 hover:text-black hover:bg-[#ddd]'}`}
                     key={index}
                     onClick={() => {
-                      setIsActive(true)
+                      
                       setCurrentPage(index + 1)} }
                 >
                     {index + 1}

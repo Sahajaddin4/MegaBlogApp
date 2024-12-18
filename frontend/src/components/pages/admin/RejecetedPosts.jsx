@@ -1,13 +1,15 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import Card from '../card/Card'
+import { BlogContext } from '../../../contextApi/BlogContextApi'
 
-function RejecetedPosts({posts,approveRejectedPosts}) {
+function RejecetedPosts({approveRejectedPosts}) {
 
+  const {rejectedPosts}=useContext(BlogContext);
    
   return (
-    <div className='overflow-y-scroll'>
+    <div className='grid grid-cols-1 md:grid-cols-2 gap-5'>
          { (
-          posts.map((post) => (
+          rejectedPosts.map((post) => (
           <div key={post._id} className='flex gap-2 '>
             <div className="card w-full mb-2 "> <Card post={post} /></div>
             <div className="button flex flex-col mb-2 justify-between ">

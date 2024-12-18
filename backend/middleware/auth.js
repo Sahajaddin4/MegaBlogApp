@@ -63,7 +63,7 @@ async function handleRefreshToken (req,res,next){
         }
         
         const currentTime=Date.now();
-        if(user.expirationTime>currentTime)
+        if(user.expireRefreshToken<currentTime)
         {
           return res.status(400).json({ message: 'Refresh token has expired' });
         }
@@ -78,18 +78,22 @@ async function handleRefreshToken (req,res,next){
 
       const token = jwt.sign(payload, process.env.JWT_SECRET_KEY, { expiresIn: "2h" });
       
-
+      const options = {
+        expires : new Date(Date.now() + 2 * 60* 60 *1000),
+       // expires:new Date(Date.now()+2*60*1000)
+        
+    }
       res.cookie("token", token, options);
       res.cookie("refreshToken",refreshToken,new Date(Date.now() + 60 * 24 * 60 * 60 * 1000));
 
-       user.expirationTime=Date.now()+60 * 24 * 60 * 60 * 1000;
+       user.expireRefreshToken=Date.now()+60 * 24 * 60 * 60 * 1000;
        await user.save();
        return next();
     } catch (error) {
       console.log('server error at creating new token using refresh token!');
       return res.status(500).json({
         success:false,
-        error:e,
+        error:error,
         message:"Server Error"
     })
     }
