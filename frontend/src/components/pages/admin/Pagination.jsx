@@ -1,19 +1,29 @@
-import React from "react";
+import React, { useCallback } from "react";
 
-function PaginationNumber({ totalpages, currentPage, setCurrentState }) {
-    
-    
+function PaginationNumber({ totalpages, currentPage, setCurrentState, onPageChange }) {
+
+
+  const handlePageChange = useCallback(
+    (index) => {
+      
+      setCurrentState(prev => ({ ...prev, page: index + 1 }));
+      
+       
+      onPageChange();
+    },
+    [setCurrentState, onPageChange]
+  );
+
   return (
     <div className="flex">
       {Array.from({ length: totalpages }, (_, index) => {
-        const isActive = currentPage === index + 1; // Check if current page is active
+        const isActive = currentPage === index + 1; 
         return (
           <button
-            className={`p-1 m-1 ${isActive ? 'bg-green-500 px-3' : 'text-blue-500 px-3 hover:text-black hover:bg-[#ddd]'}`}
             key={index}
-            onClick={() => {
-                setCurrentState(prev=>({...prev,page:index+1})); // Set the new current page
-            }}
+            className={`p-1 m-1 ${isActive ? 'bg-green-500 px-3' : 'text-blue-500 px-3 hover:text-black hover:bg-[#ddd]'}`}
+            onClick={() => handlePageChange(index)} 
+            
           >
             {index + 1}
           </button>
@@ -23,4 +33,4 @@ function PaginationNumber({ totalpages, currentPage, setCurrentState }) {
   );
 }
 
-export default PaginationNumber;
+export default React.memo(PaginationNumber);

@@ -7,7 +7,7 @@ import { BlogContext } from "../../contextApi/BlogContextApi";
 function CreateBlog() {
   // State to manage blog data
   const{isAuthenticated}=useContext(UserContext);
-  const{toastStyle}=useContext(BlogContext);
+  const{toastStyle,setCachedPosts}=useContext(BlogContext);
   const navigate=useNavigate();
   useEffect(()=>{
     if(!isAuthenticated)
@@ -42,6 +42,7 @@ function CreateBlog() {
       try {
          let res=await axios.post('/api/blog/api/create-post',blogData);
          toast.success(res.data.message,toastStyle);
+         setCachedPosts({});
         navigate('/');
          
       } catch (error) {

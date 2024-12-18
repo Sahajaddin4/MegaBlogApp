@@ -13,7 +13,7 @@ import PaginationNumber from './Pagination';
 
 function Admin() {
   // Destructuring necessary data and functions from BlogContext and UserContext
-  const { loader, setLoader, toastStyle,setPendingPosts,setRejectedPosts,pendingState,setRejectedState,rejectedState,getRejected,getPending,setPendingState, rejectedPosts, pendingPosts } = useContext(BlogContext);
+  const { loader, setLoader, toastStyle,setCachedPosts,setPendingPosts,setRejectedPosts,pendingState,setRejectedState,rejectedState,getRejected,getPending,setPendingState, rejectedPosts, pendingPosts } = useContext(BlogContext);
   const { isAuthenticated, userType } = useContext(UserContext);
   
   // Single state object to manage all UI states
@@ -90,7 +90,11 @@ function Admin() {
         setRejectedPosts((prevState) => {
           return prevState.filter(post => post._id !== postId);
         });
-        
+        setCachedPosts((prev)=>{
+          let newCache={...prev};
+          let pageKey=`rejected_${rejectedState.page}`;
+          return newCache[pageKey].data.filter(post=>post._id!==postId);
+        });
         toast.success('Approved rejected post', toastStyle);
       } else {
         toast.error('Error approving rejected post', toastStyle);
@@ -108,6 +112,24 @@ function Admin() {
     if (res) {
      
     
+      
+      setCachedPosts((prev) => {
+        let newCache = { ...prev };
+        let pendingPageKey = `pending_${pendingState.page}`;
+        let rejectedPageKey = `rejected_${rejectedState.page}`;
+        const approvedPost = newCache[pendingPageKey]?.data.find(post => post._id === postId);
+      
+        if (approvedPost) {
+          if (!newCache[rejectedPageKey]) {
+            newCache[rejectedPageKey] = { data: [] };
+          }
+          newCache[rejectedPageKey].data.push(approvedPost);
+          newCache[pendingPageKey].data = newCache[pendingPageKey].data.filter(post => post._id !== postId);
+        }
+      
+        return newCache;
+      });
+      
       setPendingPosts(prevState=>{
         return prevState.filter(post=>post._id!==postId);
       });
@@ -125,6 +147,11 @@ function Admin() {
       setPendingPosts(prevState=>{
         return prevState.filter((post)=>post._id!==postId)
       })
+      setCachedPosts((prev)=>{
+        let newCache={...prev};
+        let pageKey=`pending-${pendingState.page}`;
+        return newCache[pageKey].data.filter(post=>post._id!==postId);
+      });
       toast.success('Post approved', toastStyle);
      
     } else {
@@ -173,7 +200,7 @@ function Admin() {
     if (state.pending) {
       return pendingPosts.length > 0 ? (
         <div><PendingPosts postApproved={postApproved} postRejected={postRejected} posts={pendingPosts} />
-        <div className="pagination fixed bottom-0 mb-10"><PaginationNumber totalpages={pendingState.totalPage} setCurrentState={setPendingState} currentPage={pendingState.page}/></div>
+        <div className="pagination fixed bottom-0 mb-10"><PaginationNumber totalpages={pendingState.totalPage} onPageChange={getPending} setCurrentState={setPendingState} currentPage={pendingState.page}/></div>
         </div>
       ) : (
         'No pending posts'
@@ -184,7 +211,7 @@ function Admin() {
       return rejectedPosts.length > 0 ? (
         <div>
           <RejecetedPosts approveRejectedPosts={approveRejectedPosts} />
-          <div className="pagination fixed bottom-0 mb-10"><PaginationNumber totalpages={rejectedState.totalPage} setCurrentState={setRejectedState} currentPage={rejectedState.page}/></div>
+          <div className="pagination fixed bottom-0 mb-10"><PaginationNumber totalpages={rejectedState.totalPage} onPageChange={getRejected} setCurrentState={setRejectedState} currentPage={rejectedState.page}/></div>
         </div>
       ) : (
         'No rejected posts.'

@@ -134,10 +134,10 @@ exports.postApprove=async(req,res)=>{
         const {userType}=req.body;
         if(userType==="admin")
         {
-            await Post.findByIdAndUpdate(postId,{approved:true},{new:true});
+            let posts=await Post.findByIdAndUpdate(postId,{approved:true},{new:true});
             return res.status(200).json({
                 message:'Post approved succesfully',
-                
+                posts
             })
             
         }
@@ -160,10 +160,10 @@ exports.approveRejectedPost=async(req,res)=>{
         const {userType}=req.body;
         if(userType==="admin")
         {
-            await Post.findByIdAndUpdate(postId,{approved:true,status:"active"},{new:true});
+            let posts=await Post.findByIdAndUpdate(postId,{approved:true,status:"active"},{new:true});
             return res.status(200).json({
                 message:'Post approved succesfully',
-                
+               posts 
             })
             
         }
@@ -186,10 +186,10 @@ exports.postReject=async(req,res)=>{
         const {userType}=req.body;
         if(userType==="admin")
         {
-            await Post.findByIdAndUpdate(postId,{status:"rejected"});
+            let posts =await Post.findByIdAndUpdate(postId,{status:"rejected"});
             return res.status(200).json({
                 message:'Post approved succesfully',
-                
+                posts
             })
             
         }
