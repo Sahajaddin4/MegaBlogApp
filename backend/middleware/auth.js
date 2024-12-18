@@ -5,8 +5,6 @@ const auth=async(req,res,next)=>{
    
     try {
         const{token,refreshToken}=req.cookies;
-
-       
         
         if(token)
         {

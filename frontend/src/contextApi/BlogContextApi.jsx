@@ -138,7 +138,7 @@ export default function BlogContextProvider({ children }) {
       setCachedPosts,
       getAllBlogPosts,
     }),
-    [posts, pendingPosts, rejectedPosts, loader, currentPage, pendingState, rejectedState, totalPages]
+    [posts, pendingPosts, rejectedPosts,setCachedPosts, loader, currentPage, pendingState, rejectedState, totalPages]
   );
 
   return <BlogContext.Provider value={value}>{children}</BlogContext.Provider>;

@@ -8,7 +8,8 @@ import SignUp from "./components/pages/auth_pages/SignUp";
 import Contact from "./components/pages/Contact";
 import Admin from "./components/pages/admin/Admin";
 import UserDashboard from "./components/pages/user/UserDashboard";
-
+import PendingPosts from "./components/pages/admin/PendingPosts";
+import RejectedPosts from "./components/pages/admin//RejecetedPosts";
 import ShowBlog from "./components/pages/card/ShowBlog";
 
 function App() {
@@ -18,6 +19,8 @@ function App() {
         <Route path="/" element={<Layout />}>
         <Route path="/" element={<Home />} />
         <Route path="admin" element={<Admin />}/>
+        <Route path="admin/pending-approvals" element={<PendingPosts />} />
+        <Route path="admin/rejected-posts" element={<RejectedPosts />} />
         <Route path="user" element={<UserDashboard />}/>
         <Route path="about" element={<About />} />
         <Route path="create-blog" element={<CreateBlog />}/>
