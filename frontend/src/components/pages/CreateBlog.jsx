@@ -41,9 +41,16 @@ function CreateBlog() {
    
       try {
          let res=await axios.post('/api/blog/api/create-post',blogData);
-         toast.success(res.data.message,toastStyle);
-         setCachedPosts({});
-        navigate('/');
+         if(res.status===200)
+         {
+          toast.success(res.data.message,toastStyle);
+         setCachedPosts({
+          allPostsCache: {},
+    pendingPostsCache: {},
+    rejectedPostsCache: {}
+         });
+         }
+        
          
       } catch (error) {
         toast.error('Failed to create post!',toastStyle);

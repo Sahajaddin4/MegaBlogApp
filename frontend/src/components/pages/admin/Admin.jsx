@@ -8,7 +8,7 @@ import UserLists from './UserLists';
 import axios from 'axios';
 
 function Admin() {
-  const { loader, setLoader, toastStyle, setPendingPosts, setRejectedPosts, getPending, getRejected, pendingState, rejectedState } = useContext(BlogContext);
+  const { loader, setLoader, toastStyle} = useContext(BlogContext);
   const { isAuthenticated, userType } = useContext(UserContext);
 
   const [users, setUsers] = useState([]);
