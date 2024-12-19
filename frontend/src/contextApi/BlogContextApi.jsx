@@ -144,7 +144,7 @@ export default function BlogContextProvider({ children }) {
             ...prev,
             totalPage: cachedData.totalPage,
           }));
-          return; // Exit early if data is cached
+          return;
         }
       }
 
@@ -152,7 +152,7 @@ export default function BlogContextProvider({ children }) {
       setRejectedState(prev => ({ ...prev, totalPage: getposts.data.totalPage }));
       setRejectedPosts(getposts.data.rejectedPosts);
 
-      // Cache the data and update with FIFO eviction
+      // Cache the data and update 
       setCachedPosts(prev => ({
         ...prev,
         rejectedPostsCache: updateCacheWithFIFO(prev.rejectedPostsCache, cacheKey, getposts.data)

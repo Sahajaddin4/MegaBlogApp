@@ -99,7 +99,8 @@ function Card({ post }) {
     };
 
     return (
-        <div className="bg-gray-100 border border-gray-200 rounded-lg shadow-md p-4 flex flex-col w-full min-h-[35vh] hover:scale-y-110 mx-auto mb-4">
+        <div>
+            <div className="bg-gray-100 border border-gray-200 rounded-lg shadow-md p-4 flex flex-col w-full min-h-[35vh] hover:scale-y-110 mx-auto mb-4">
             {/* Title and Author section */}
             <div className="flex justify-between items-center mb-4">
                 <p className="text-xl font-semibold text-gray-900">{post.title}</p>
@@ -130,14 +131,15 @@ function Card({ post }) {
                 </div>
             </div>
 
-            {/* Comments Modal */}
-            {isOpen && allComments && (
-                <div className="fixed inset-2 bg-gray-800 bg-opacity-50 flex items-center justify-center z-10">
-                    <div className="bg-white p-6 rounded-lg shadow-md max-w-lg w-full">
-                        <CommentDetails comments={allComments} setCloseModal={setCloseModal} setIsOpen={setIsOpen} closeModal={closeModal} fetchcomments={fetchcomments} />
-                    </div>
-                </div>
-            )}
+           
+        </div>
+         {/* Comments Modal */}
+         {isOpen && allComments && (
+                
+                    
+                <CommentDetails comments={allComments} countComment={countComment} setCountComment={setCountComment} setAllComments={setAllComments} setCloseModal={setCloseModal} setIsOpen={setIsOpen} closeModal={closeModal}  />
+      
+    )}
         </div>
     );
 }

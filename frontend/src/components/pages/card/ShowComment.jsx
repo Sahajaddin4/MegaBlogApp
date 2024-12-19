@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 import { BlogContext } from "../../../contextApi/BlogContextApi";
 import { UserContext } from "../../../contextApi/userAuthContext";
 
-function ShowComment({ comment, fetchcomments }) {
+function ShowComment({ comment ,setAllComments,countComment,setCountComment}) {
   const{toastStyle}=useContext(BlogContext);
   const {userId}=useContext(UserContext);
   async function deletecomment(){
@@ -23,12 +23,14 @@ function ShowComment({ comment, fetchcomments }) {
         if(res.data.success===false)
         {
           toast.error(res.data.message,toastStyle);
-          await fetchcomments();
+         
           return;
         }
       
         else{
-          await fetchcomments();
+           
+           setAllComments(prev=>prev.filter(comment=>comment._id!==data.commentId));
+           setCountComment(countComment-1);
           toast.success("Comment Deleted",toastStyle);
         }
         
