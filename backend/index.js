@@ -1,14 +1,26 @@
 //All import here
 const express=require('express');
 const app=express();
+const http=require('http');
+const server=http.createServer(app);
+const {Server}=require('socket.io');
 const cors=require('cors');
+//socket server
+const io=new Server(server,{
+  cors:{
+    origin:'*'
+  }
+});
+module.exports=io;
 const blogRoutes=require('./routes/blogRoutes');
+const notificationRoutes=require('./routes/notificationRoutes');
 const likeRoutes=require('./routes/likeRoutes');
 const commentRoutes = require('./routes/commentRoutes');
 const userRoute = require('./routes/userRoute');
 const morgan=require('morgan');
 const cookie = require("cookie-parser")
 const fs=require('fs');
+
 //env configaration done
 require('dotenv').config();
 const dbConnect=require('./config/db');
@@ -64,15 +76,24 @@ app.use('/blog/api/comment', commentRoutes);
 // Route for user
 app.use('/blog/api/user', userRoute)
 
+//route for notification
+app.use('/blog/api/notification',notificationRoutes);
 //Default route
 app.get('/',(_,res)=>{
     res.send(`<h1>This is homepage</h1>`);
 })
 
+//Socket
+io.on('connection', (socket) => {
+  console.log('A user connected: ' + socket.id);
 
+  socket.on('disconnect', () => {
+    console.log('A user disconnected: ' + socket.id);
+  });
+});
 
 //server creation here
 const PORT=process.env.PORT;
-app.listen(PORT ||4000,(err)=>{
+server.listen(PORT ||4000,(err)=>{
     console.log(`Server connected at port ${PORT}`);
 });

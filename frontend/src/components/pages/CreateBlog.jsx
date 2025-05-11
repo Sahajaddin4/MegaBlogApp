@@ -4,28 +4,23 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { BlogContext } from "../../contextApi/BlogContextApi";
+
 function CreateBlog() {
-  // State to manage blog data
-  const{isAuthenticated}=useContext(UserContext);
-  const{toastStyle,setCachedPosts}=useContext(BlogContext);
-  const navigate=useNavigate();
-  useEffect(()=>{
-    if(!isAuthenticated)
-      {
-        
-          navigate('/user/login');
-      }
-   
-     
-  },[isAuthenticated]);
+  const { isAuthenticated } = useContext(UserContext);
+  const { toastStyle, setCachedPosts } = useContext(BlogContext);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigate('/user/login');
+    }
+  }, [isAuthenticated]);
 
   const [blogData, setBlogData] = useState({
     title: "",
     body: "",
-    
   });
 
-  // Function to handle changes in the input fields
   function handleChange(e) {
     const { name, value } = e.target;
     setBlogData(prevData => ({
@@ -34,76 +29,80 @@ function CreateBlog() {
     }));
   }
 
-  // Function to handle form submission (e.g., sending data to the database)
   async function handleSubmit(e) {
     e.preventDefault();
-    // Implement data submission logic here
-   
-      try {
-         let res=await axios.post('/api/blog/api/create-post',blogData);
-         toast.success(res.data.message,toastStyle);
-         setCachedPosts({});
-        navigate('/');
-         
-      } catch (error) {
-        toast.error('Failed to create post!',toastStyle);
-      }
-      finally{
-        setBlogData({
-          title: "",
-          body: "",
-        })
-      }
-    // Example: Logs the blog data to the console
+    try {
+      let res = await axios.post('/api/blog/api/create-post', blogData);
+      toast.success(res.data.message, toastStyle);
+      setCachedPosts({});
+      navigate('/');
+    } catch (error) {
+      toast.error('Failed to create post!', toastStyle);
+    } finally {
+      setBlogData({
+        title: "",
+        body: "",
+      });
+    }
   }
 
   return (
-    <div className="login w-[30em] mt-20 h-[20em] mx-auto rounded-lg shadow-2xl border px-4 py-2 m-2">
-      <div className="heading text-center mb-5">
-        <h1 className="text-2xl font-bold">Create Blog</h1>
-      </div>
-      <div className="form">
-        <form className="flex flex-col gap-5" onSubmit={handleSubmit}> 
-          {/* Title input field */}
-          <div className="title flex gap-2 items-center">
-            <label htmlFor="title">Title: </label>
-            <input
-              type="text"
-              name="title"
-              id="title"
-              value={blogData.title}
-              onChange={handleChange}
-              className="border-2 ml-2 hover:border-blue-400 py-2 rounded w-full"
-            />
+    <div className="min-h-screen bg-gradient-to-br from-gray-100 via-white to-gray-200 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center justify-center">
+      <div className="max-w-2xl w-full animate-fade-in">
+        <div className="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-3xl shadow-2xl overflow-hidden">
+          
+          {/* Header */}
+          <div className="bg-gradient-to-r from-blue-600 to-indigo-700 p-6 text-center rounded-t-3xl">
+            <h1 className="text-3xl font-extrabold text-white drop-shadow-lg">Create Your Blog Post</h1>
+            <p className="text-blue-100 mt-1 italic">Share your story with the world 🌍</p>
           </div>
 
-          {/* Body textarea field */}
-          <div className="body flex gap-2 items-center">
-            <label htmlFor="body">Body:</label>
-            <div className="relative border-2 hover:border-blue-400 py-2 rounded w-full">
+          {/* Form */}
+          <form onSubmit={handleSubmit} className="p-5 space-y-4">
+            {/* Title Field */}
+            <div className="space-y-1">
+              <label htmlFor="title" className="block text-base font-semibold text-gray-700 dark:text-gray-200">
+                Title
+              </label>
+              <input
+                type="text"
+                name="title"
+                id="title"
+                value={blogData.title}
+                onChange={handleChange}
+                className="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white shadow-sm transition-all duration-200"
+                placeholder="Enter your blog title"
+              />
+            </div>
+
+            {/* Body Field */}
+            <div className="space-y-1">
+              <label htmlFor="body" className="block text-base font-semibold text-gray-700 dark:text-gray-200">
+                Content
+              </label>
               <textarea
                 value={blogData.body}
                 name="body"
                 id="body"
                 maxLength={10000}
                 onChange={handleChange}
-                className="w-full border-none outline-none pr-10"
+                rows={6}
+                className="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white shadow-sm transition-all duration-200"
+                placeholder="Write your blog content here..."
               />
             </div>
-          </div>
 
-          
-
-          {/* Submit button */}
-          <div className="btn text-center mt-5">
-            <button
-              type="submit"
-              className="py-2 px-4 rounded w-[60%] mx-auto bg-blue-600 text-white"
-            >
-              Add Blog
-            </button>
-          </div>
-        </form>
+            {/* Submit Button */}
+            <div className="pt-2">
+              <button
+                type="submit"
+                className="w-full bg-gradient-to-r from-blue-600 to-indigo-700 hover:from-blue-700 hover:to-indigo-800 text-white font-bold py-2.5 px-5 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
+              >
+                Publish Blog
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   );

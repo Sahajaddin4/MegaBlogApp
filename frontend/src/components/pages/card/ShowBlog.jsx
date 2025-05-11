@@ -7,8 +7,7 @@ import Spinner from '../spinner/Spinner';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 
-function ShowBlog() {
-  // Sample data - You would probably fetch this from an API
+export default function ShowBlog() {
   const { id } = useParams(); // Get the postId from the URL
 // State management
 const [isLiked, setIsLiked] = useState(false); 
@@ -132,98 +131,107 @@ const { toastStyle ,setLoader} = useContext(BlogContext);
   {
    navigate(-1);
   }
+
   return (
     <>
-    {
-      !post?<Spinner/>:(
-       <div className='mt-10'>
-        <button className='bg-blue-600 hover:bg-white hover:text-blue-500 px-2 py-1 rounded text-white' onClick={handleBackButton}>Back</button>
-         <div className="w-full mt-5 bg-white border border-gray-200 rounded-lg shadow-md dark:bg-gray-800 dark:border-gray-700 p-4 flex flex-col">
-      {/* Title and Author section */}
-      <div className="flex justify-between items-center mb-4">
-        <p className="text-2xl font-semibold text-gray-900 dark:text-white">{post.title}</p>
-        <div className="text-sm text-gray-500 dark:text-gray-400">By {post.author}</div>
-      </div>
+      {!post ? (
+        <Spinner />
+      ) : (
+        <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8 px-4 sm:px-6 lg:px-8">
+          <div className="max-w-4xl mx-auto">
+            <button 
+              onClick={handleBackButton}
+              className="mb-8 flex items-center text-gray-600 dark:text-gray-300 hover:text-blue-600 transition-colors"
+            >
+              <i className="fa-solid fa-arrow-left mr-2"></i>
+              Back to Posts
+            </button>
 
-      {/* Description section */}
-      <div className="flex-grow mb-4">
-        <h1 className="text-xl font-medium text-gray-700 dark:text-gray-400">Description:</h1>
-       
-          <p className="text-gray-600 dark:text-gray-300">
-            {post.body}
-           
-          </p>
-       
-      </div>
+            <article className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl overflow-hidden">
+              {/* Header Section */}
+              <div className="p-8 border-b border-gray-100 dark:border-gray-700">
+                <h1 className="text-3xl font-bold text-gray-800 dark:text-white mb-4">
+                  {post.title}
+                </h1>
+                <div className="flex items-center text-gray-500 dark:text-gray-400">
+                  <span className="inline-block bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-3 py-1 rounded-full text-sm font-medium">
+                    {post.author}
+                  </span>
+                </div>
+              </div>
 
-      {/* Like and Comment section at the bottom */}
-      <div className="flex md:flex-row sm:flex-col justify-between items-center mt-4">
-        {/* Like section */}
-        <div className="flex items-center gap-2 mb-3 sm:mb-0">
-          {isAuthenticated ? (
-            isLiked ? (
-              <i
-                className="fa-regular fa-heart text-red-500 hover:cursor-pointer text-xl"
-                onClick={handleLike}
-                role="button"
-              ></i>
-            ) : (
-              <i
-                className="fa-regular fa-heart hover:cursor-pointer text-xl"
-                onClick={handleLike}
-              ></i>
-            )
-          ) : (
-            <i className="fa-regular fa-heart text-gray-500"></i>
-          )}
-          <span className="ml-1 text-gray-600 dark:text-gray-300">{countLike}</span>
-        </div>
+              {/* Content Section */}
+              <div className="p-8 prose dark:prose-invert max-w-none">
+                <p className="text-gray-600 dark:text-gray-300 leading-7">
+                  {post.body}
+                </p>
+              </div>
 
-        {/* Comment section */}
-        <div className="flex items-center gap-3">
-          <input
-            type="text"
-            placeholder="Add a comment..."
-            value={comment}
-            onChange={(e) => setComment(e.target.value)}
-            className="px-3 py-2 border rounded-md w-full sm:w-36 dark:bg-gray-700 dark:text-white dark:border-gray-600"
-          />
-          <button
-            onClick={handleComment}
-            className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600"
-          >
-            Add
-          </button>
-          <button
-            onClick={showComments}
-            className="text-blue-600 hover:text-blue-800 flex items-center gap-1"
-          >
-            <i className="fa-regular fa-comment text-lg"></i>
-            <span>{countComment}</span>
-          </button>
-        </div>
-      </div>
+              {/* Interaction Section */}
+              <div className="p-8 border-t border-gray-100 dark:border-gray-700">
+                <div className="flex flex-wrap items-center justify-between gap-4">
+                  {/* Like Button */}
+                  <div className="flex items-center space-x-3">
+                    <button
+                      onClick={handleLike}
+                      disabled={!isAuthenticated}
+                      className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-all ${
+                        isLiked 
+                          ? 'text-red-500 bg-red-50 dark:bg-red-900/20'
+                          : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700'
+                      }`}
+                    >
+                      <i className={`fa-heart text-xl ${
+                        isLiked ? 'fa-solid' : 'fa-regular'
+                      }`}></i>
+                      <span className="font-medium">{countLike}</span>
+                    </button>
+                  </div>
 
-      {/* Comments Modal */}
-      {isOpen && allComments && (
-        <div className="fixed inset-2 bg-gray-800 bg-opacity-50 flex items-center justify-center z-10">
-          <div className="bg-white p-6 rounded-lg shadow-md max-w-lg w-full">
-            <CommentDetails
-              comments={allComments}
-              setCloseModal={setCloseModal}
-              setIsOpen={setIsOpen}
-              closeModal={closeModal}
-              fetchcomments={fetchcomments}
-            />
+                  {/* Comment Section */}
+                  <div className="flex flex-1 items-center gap-4 max-w-xl">
+                    <input
+                      type="text"
+                      placeholder="Share your thoughts..."
+                      value={comment}
+                      onChange={(e) => setComment(e.target.value)}
+                      className="flex-1 px-4 py-2 border dark:border-gray-700 rounded-full bg-transparent focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                    <button
+                      onClick={handleComment}
+                      className="px-6 py-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-full hover:shadow-lg transition-shadow"
+                    >
+                      Post
+                    </button>
+                    <button
+                      onClick={showComments}
+                      className="flex items-center space-x-2 text-gray-600 dark:text-gray-400 hover:text-blue-600 transition-colors"
+                    >
+                      <i className="fa-regular fa-comment-dots text-xl"></i>
+                      <span className="font-medium">{countComment}</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </article>
+
+            {/* Comments Modal */}
+            {isOpen && allComments && (
+              <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+                <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-2xl max-h-[80vh] overflow-hidden">
+                  <CommentDetails
+                    comments={allComments}
+                    setCloseModal={setCloseModal}
+                    setIsOpen={setIsOpen}
+                    closeModal={closeModal}
+                    fetchcomments={fetchcomments}
+                  />
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}
-    </div>
-      
-       </div>)
-    }
     </>
   );
 }
-
-export default ShowBlog;

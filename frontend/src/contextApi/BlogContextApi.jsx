@@ -87,7 +87,6 @@ export default function BlogContextProvider({ children }) {
     try {
       let url = `/api/blog/api/get-rejected-posts/?page=${rejectedState.page}&limit=4`;
       setLoader(true);
-      console.log(rejectedState.page,cachedPosts);
       
       if(cachedPosts[`rejected_${rejectedState.page}`]){
         setRejectedPosts(cachedPosts[`rejected_${rejectedState.page}`].data);

@@ -7,9 +7,10 @@ import CommentDetails from "./CommentDetails";
 import { Link } from "react-router-dom";
 import LikeButton from "./LikeButton";
 import CommentSection from "./CommentSection";
+import { FiMessageCircle, FiUser, FiArrowRight } from "react-icons/fi";
 
 function Card({ post }) {
-    const { isAuthenticated, user, userId } = useContext(UserContext);
+   const { isAuthenticated, user, userId } = useContext(UserContext);
 
     // State management
     const [isLiked, setIsLiked] = useState(false);
@@ -98,43 +99,74 @@ function Card({ post }) {
         setCloseModal(false);
     };
 
+
     return (
-        <div className="bg-gray-100 border border-gray-200 rounded-lg shadow-md p-4 flex flex-col w-full min-h-[35vh] hover:scale-y-110 mx-auto mb-4">
-            {/* Title and Author section */}
-            <div className="flex justify-between items-center mb-4">
-                <p className="text-xl font-semibold text-gray-900">{post.title}</p>
-                <div className="text-sm text-gray-500">By {post.author}</div>
+        <div className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 p-6 mb-6 relative group">
+            {/* Author Badge */}
+            <div className="flex items-center mb-4 text-gray-600">
+                <FiUser className="mr-2" />
+                <span className="font-medium bg-gray-100 px-3 py-1 rounded-full text-sm">
+                    {post.author}
+                </span>
             </div>
 
-            {/* Description section */}
-            <div className="flex-grow mb-4">
-                <h1 className="text-lg font-medium text-gray-700">Description:</h1>
-                <p className="text-gray-600">
+            {/* Title */}
+            <h3 className="text-2xl font-bold text-gray-800 mb-3">{post.title}</h3>
+
+            {/* Description */}
+            <div className="mb-6">
+                <p className="text-gray-600 leading-relaxed">
                     {post.body.substring(0, 100)}
-                    <Link to={`blog/${post._id}`}>
-                        <button className="text-blue-600 hover:text-blue-800 font-semibold ml-2">.read more..</button>
+                    <Link 
+                        to={`blog/${post._id}`}
+                        className="inline-flex items-center text-blue-600 hover:text-blue-800 font-medium ml-2 transition-colors"
+                    >
+                        Continue reading
+                        <FiArrowRight className="ml-1" />
                     </Link>
                 </p>
             </div>
 
-            {/* Like and Comment section at the bottom */}
-            <div className=" flex justify-between items-center mt-4">
-                <div className="flex items-center gap-2">
-                    <LikeButton isAuthenticated={isAuthenticated} isLiked={isLiked} handleLike={handleLike} />
-                    <span className="ml-1 text-gray-600">{countLike}</span>
+            {/* Interaction Bar */}
+            <div className="border-t border-gray-100 pt-4 flex justify-between items-center">
+                <div className="flex items-center space-x-2">
+                    <LikeButton 
+                        isAuthenticated={isAuthenticated} 
+                        isLiked={isLiked} 
+                        handleLike={handleLike} 
+                    />
+                    <span className="text-gray-600 mr-1 font-medium">{countLike}</span>
+                    <p></p>
+                    
+                    {/* <button 
+                        onClick={showComments}
+                        className="flex items-center text-gray-600 hover:text-blue-600 transition-colors"
+                    >
+                        <FiMessageCircle className="mr-2" />
+                        <span className="font-medium">{countComment}</span>
+                    </button> */}
                 </div>
 
-                <div className="flex items-center gap-3">
-                    <CommentSection showComments={showComments} comment={comment} setComment={setComment} handleComment={handleComment} />
-                    <span>{countComment}</span>
-                </div>
+                <CommentSection 
+                    showComments={showComments} 
+                    comment={comment} 
+                    setComment={setComment} 
+                    handleComment={handleComment} 
+                />
+                <span className="ml-2 font-medium">{countComment}</span>
             </div>
 
             {/* Comments Modal */}
             {isOpen && allComments && (
-                <div className="fixed inset-2 bg-gray-800 bg-opacity-50 flex items-center justify-center z-10">
-                    <div className="bg-white p-6 rounded-lg shadow-md max-w-lg w-full">
-                        <CommentDetails comments={allComments} setCloseModal={setCloseModal} setIsOpen={setIsOpen} closeModal={closeModal} fetchcomments={fetchcomments} />
+                <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+                    <div className="bg-white rounded-2xl shadow-2xl w-full max-w-xl max-h-[80vh] overflow-hidden">
+                        <CommentDetails 
+                            comments={allComments} 
+                            setCloseModal={setCloseModal} 
+                            setIsOpen={setIsOpen} 
+                            closeModal={closeModal} 
+                            fetchcomments={fetchcomments} 
+                        />
                     </div>
                 </div>
             )}

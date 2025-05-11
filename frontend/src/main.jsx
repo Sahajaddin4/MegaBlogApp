@@ -6,19 +6,21 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import UserContextProvider from './contextApi/UserAuthContext.jsx';
 import BlogContextProvider from './contextApi/BlogContextApi.jsx';
+import NotificationContextApi from './contextApi/NotificationContextApi.jsx';
 
-
+<script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
 createRoot(document.getElementById('root')).render(
   <BrowserRouter>
     <UserContextProvider>
       <BlogContextProvider>
-
+        <NotificationContextApi>
    <div className="main bg-[#cccccc] min-h-screen">
       <App />
       <ToastContainer 
 
 />
     </div>
+     </NotificationContextApi>
       </BlogContextProvider>
 
     </UserContextProvider>

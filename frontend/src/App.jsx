@@ -10,6 +10,7 @@ import Admin from "./components/pages/admin/Admin";
 import UserDashboard from "./components/pages/user/UserDashboard";
 
 import ShowBlog from "./components/pages/card/ShowBlog";
+// import NotificationPanel from "./components/notification/NotificationPanel";
 
 function App() {
   return (
@@ -25,8 +26,10 @@ function App() {
         <Route path="user/signup" element={<SignUp/>} />
         <Route path="admin-contact" element={<Contact />} />
         <Route path="blog/:id" element={<ShowBlog />}/>
+        <Route path="admin/blog/:id" element={<ShowBlog />}/>
         </Route>
       </Routes>
+      {/* <NotificationPanel /> */}
     </div>
   );
 }
