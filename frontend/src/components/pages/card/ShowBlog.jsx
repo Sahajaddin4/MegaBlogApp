@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import CommentDetails from './CommentDetails';
 import { BlogContext } from '../../../contextApi/BlogContextApi';
-import { UserContext } from '../../../contextApi/userAuthContext';
+import { UserContext } from '../../../contextApi/UserAuthContext';
 import Spinner from '../spinner/Spinner';
 import axios from 'axios';
 import { toast } from 'react-toastify';

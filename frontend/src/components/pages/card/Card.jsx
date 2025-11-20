@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { BlogContext } from "../../../contextApi/BlogContextApi";
 import axios from "axios";
-import { UserContext } from "../../../contextApi/userAuthContext";
+import { UserContext } from "../../../contextApi/UserAuthContext";
 import { toast } from "react-toastify";
 import CommentDetails from "./CommentDetails";
 import { Link } from "react-router-dom";

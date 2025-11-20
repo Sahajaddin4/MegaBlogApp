@@ -1,7 +1,7 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 import UserLists from './UserLists';
 import { BlogContext } from '../../../contextApi/BlogContextApi';
-import { UserContext } from '../../../contextApi/userAuthContext';
+import { UserContext } from '../../../contextApi/UserAuthContext';
 import { Link, useNavigate } from 'react-router-dom';
 import Spinner from '../spinner/Spinner';
 import axios from 'axios';
@@ -9,13 +9,13 @@ import { toast } from 'react-toastify';
 import PendingPosts from './PendingPosts';
 import RejecetedPosts from './RejecetedPosts';
 import PaginationNumber from './Pagination';
-import io from 'socket.io-client';
+// import io from 'socket.io-client';
 import { NotificationContext } from '../../../contextApi/NotificationContextApi';
 
 function Admin() {
   // Destructuring necessary data and functions from BlogContext and UserContext
   const { loader, setLoader, toastStyle, setCachedPosts, setPendingPosts, setRejectedPosts, pendingState, setRejectedState, rejectedState, getRejected, getPending, setPendingState, rejectedPosts, pendingPosts } = useContext(BlogContext);
-  const { isAuthenticated, userType } = useContext(UserContext);
+  const { isAuthenticated, userType,socket } = useContext(UserContext);
   const { getAdminNotification } = useContext(NotificationContext);
   const [state, setState] = useState({
     users: [],
@@ -24,14 +24,15 @@ function Admin() {
     rejected: false
   });
 
-  const socket = io(`http://localhost:3000`);
+  // const socket = io(`http://localhost:3000`);
   
-  socket.on('connect', () => {
-    console.log('connected to socket server');
-  });
+  // socket.on('connect', () => {
+  //   console.log('connected to socket server');
+  // });
   
   socket.on('newBlog', async () => {
-    getAdminNotification();
+    console.log("newBlog")
+    await getAdminNotification();
   });
 
   const navigate = useNavigate();
@@ -148,6 +149,7 @@ function Admin() {
   const postApproved = async (postId) => {
     let res = await axios.put(`/api/blog/api/blog-approved/${postId}`);
     if (res.status === 200) {
+      socket.emit("postApproved",`You post has been Approved`);
       getAdminNotification(); 
       setPendingPosts(prevState => {
         return prevState.filter((post) => post._id !== postId)

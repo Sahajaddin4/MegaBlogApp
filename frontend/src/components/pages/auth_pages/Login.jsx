@@ -5,7 +5,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import axios from 'axios';
 import Cookies from 'js-cookie'; 
-import { UserContext } from '../../../contextApi/userAuthContext';
+import { UserContext } from '../../../contextApi/UserAuthContext';
 import { BlogContext } from '../../../contextApi/BlogContextApi';
 function Login() {
   const [passwordType, setPasswordType] = useState('password');

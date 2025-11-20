@@ -1,15 +1,17 @@
 import React, {  useContext, useEffect, useState } from 'react'
-import { UserContext } from '../../../contextApi/userAuthContext';
+import { UserContext } from '../../../contextApi/UserAuthContext';
 import { useNavigate } from 'react-router-dom';
 import { BlogContext } from '../../../contextApi/BlogContextApi';
 import axios from 'axios';
 import Spinner from '../spinner/Spinner';
 import MyBlogs from './MyBlogs';
+import { NotificationContext } from '../../../contextApi/NotificationContextApi';
 
 function UserDashboard() {
 
-    const {isAuthenticated,userId}=useContext(UserContext);
+    const {isAuthenticated,userId,socket}=useContext(UserContext);
     const {loader,setLoader}=useContext(BlogContext);
+    const {setMsg} = useContext(NotificationContext)
     const [myBlogs,setMyBlogs]=useState([]);
     const navigate=useNavigate();
     
@@ -26,6 +28,16 @@ function UserDashboard() {
         }
       };
 
+      //fetch notification
+
+      socket.on(`postApproved-${userId}`,  async (msg) => {
+            const newMsg = {
+                url:`/blog/${msg.postId}`,
+                desc:msg.message
+            }
+            console.log(msg);
+            setMsg((prev) => [...prev, newMsg]);
+        })
       //Condional rendering
       function renderContent(){
         if(loader)

@@ -1,6 +1,6 @@
 import { createContext, useContext, useMemo, useState } from "react";
 import axios from "axios";
-import { UserContext } from "./userAuthContext";
+import { UserContext } from "./UserAuthContext";
 
 export const BlogContext = createContext();
 

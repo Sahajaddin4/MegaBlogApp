@@ -2,13 +2,14 @@ import React, { useContext } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import './Navbar.css';
 import appLogo from "../../../assets/appLogo.jpeg";
-import { UserContext } from "../../../contextApi/userAuthContext";
+import { UserContext } from "../../../contextApi/UserAuthContext";
 import { toast } from "react-toastify";
 import Cookies from 'js-cookie';
 import { BlogContext } from "../../../contextApi/BlogContextApi";
 import axios from "axios";
 import { NotificationContext } from "../../../contextApi/NotificationContextApi";
 import NotificationPanel from "../../notification/NotificationPanel";
+import UserNotification from "../../notification/UserNotification";
 
 function Navbar() {
   const { toggleNotifyModal } = useContext(NotificationContext);
@@ -29,9 +30,12 @@ function Navbar() {
     }
     else if (userType === "user") {
       return (
-        <NavLink to="/user" className="hover:bg-gray-100 px-3 py-2 rounded-md transition-colors">
+        <>
+          <NavLink to="/user" className="hover:bg-gray-100 px-3 py-2 rounded-md transition-colors">
           <button className="text-gray-700 hover:text-blue-600">Dashboard</button>
         </NavLink>
+        <UserNotification/>
+        </>
       )
     }
     return null;

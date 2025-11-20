@@ -2,12 +2,12 @@ const Post = require("../../models/postModels");
 const Like = require("../../models/likeModels");
 const Comment = require("../../models/commentModels");
 const Notification = require('../../models/notificationModel');
+const {notifyAdmin,notifySingleUser} = require("../socket/socketController");
 //Create Post controller
 exports.createPost = async (req, res) => {
     try {
-        const io = require('../../index');
+        // const io = require('../../index');
         const { title, body, author, id } = req.body;
-
         const newPost = await Post.create({ title, body, author, userId: id });
         await Notification.create({
             user: id,
@@ -15,7 +15,8 @@ exports.createPost = async (req, res) => {
             author: author,
             post: newPost._id
         });
-        io.emit('newBlog', `New Blog Added by ${author}`);
+        // io.emit('newBlog', `New Blog Added by ${author}`);
+        notifyAdmin("newBlog",`New blog has been posted by ${author}`); 
         return res.status(200).json({
             message: 'Post added succesfully',
         })
@@ -36,8 +37,8 @@ exports.createPost = async (req, res) => {
 exports.getAllPosts = async (req, res) => {
     try {
         const user = req.params.id;
-
-
+        // const bcrypt = require("bcrypt")
+        // console.log(await bcrypt.hash("Saha@@2000", 10))
         const limit = parseInt(req.query.limit) || 5;
         const page = parseInt(req.query.page) || 1;
         const skip = (page - 1) * limit;
@@ -141,14 +142,19 @@ exports.postApprove = async (req, res) => {
     try {
         const postId = req.params.id;
         const { userType } = req.body;
+        console.log(req.body)
         if (userType === "admin") {
             let posts = await Post.findByIdAndUpdate(postId, { approved: true }, { new: true });
+            const approvedPost = await Post.findById(postId).select("userId").lean();
             await Notification.findOneAndUpdate(
                 { post: postId },
                 { $set: { mark: true } },
                 { new: true }
             );
-
+            notifySingleUser(`postApproved-${approvedPost.userId.toString()}`, {
+                postId:postId,
+                message:`Your post has been approved post id = ${postId}`
+            });
             return res.status(200).json({
                 message: 'Post approved succesfully',
                 posts

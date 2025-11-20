@@ -2,7 +2,7 @@ import React, { useContext } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { BlogContext } from "../../../contextApi/BlogContextApi";
-import { UserContext } from "../../../contextApi/userAuthContext";
+import { UserContext } from "../../../contextApi/UserAuthContext";
 
 function ShowComment({ comment, fetchcomments }) {
   const{toastStyle}=useContext(BlogContext);

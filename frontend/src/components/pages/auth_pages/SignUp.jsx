@@ -5,7 +5,7 @@ import crossEye from "../../../assets/crossEye.png";
 import { toast } from "react-toastify";
 import axios from "axios";
 import isEmail from 'validator/lib/isEmail';
-import { UserContext } from "../../../contextApi/userAuthContext";
+import { UserContext } from "../../../contextApi/UserAuthContext";
 import { BlogContext } from "../../../contextApi/BlogContextApi";
 
 function SignUp() {

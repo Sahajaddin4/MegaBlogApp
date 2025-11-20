@@ -119,8 +119,6 @@ exports.userLogin=async(req,res)=>{
         const { email, password} = req.body;
         
         // Validation
-
-
         let user=await User.findOne({email,status:"active"});
         if(!user){
             return res.status(200).json({

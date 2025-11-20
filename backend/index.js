@@ -11,15 +11,17 @@ const io=new Server(server,{
     origin:'*'
   }
 });
+
 module.exports=io;
+
 const blogRoutes=require('./routes/blogRoutes');
 const notificationRoutes=require('./routes/notificationRoutes');
 const likeRoutes=require('./routes/likeRoutes');
 const commentRoutes = require('./routes/commentRoutes');
 const userRoute = require('./routes/userRoute');
-const morgan=require('morgan');
+// const morgan=require('morgan');
 const cookie = require("cookie-parser")
-const fs=require('fs');
+// const fs=require('fs');
 
 //env configaration done
 require('dotenv').config();
@@ -29,42 +31,42 @@ const path = require('path');
 //All Logic here
 dbConnect();
 
-//Parsing json data  middleware
-let logFile=path.join(__dirname,'/System-logs/access.log')
-const logStreams=fs.createWriteStream(logFile,{flags:'a'});
+// //Parsing json data  middleware
+// let logFile=path.join(__dirname,'/System-logs/access.log')
+// const logStreams=fs.createWriteStream(logFile,{flags:'a'});
 
-// Custom log format (JSON)
+// // Custom log format (JSON)
 
-morgan.token('json', function (req, res) {
-    return JSON.stringify({
-      method: req.method,
-      url: req.url,
-      status: res.statusCode,
-      responseTime: res.responseTime,
-      date: new Date().toLocaleString(),
-      ip: req.ip,
-    });
-  });
+// morgan.token('json', function (req, res) {
+//     return JSON.stringify({
+//       method: req.method,
+//       url: req.url,
+//       status: res.statusCode,
+//       responseTime: res.responseTime,
+//       date: new Date().toLocaleString(),
+//       ip: req.ip,
+//     });
+//   });
 
-  const clearLogFile = async () => {
-    try {
-      // Truncate the log file (clear content)
-      await fs.promises.truncate(logFile, 0);
+//   const clearLogFile = async () => {
+//     try {
+//       // Truncate the log file (clear content)
+//       await fs.promises.truncate(logFile, 0);
       
-    } catch (err) {
-      console.error('Error clearing the log file:', err);
-    }
-  };
-const TIME_LIMIT=24*60*60*1000;
-  setInterval(()=>{
-    clearLogFile();
-  },TIME_LIMIT)
-app.use(morgan(':json',{stream:logStreams}));
+//     } catch (err) {
+//       console.error('Error clearing the log file:', err);
+//     }
+//   };
+// const TIME_LIMIT=24*60*60*1000;
+//   setInterval(()=>{
+//     clearLogFile();
+//   },TIME_LIMIT)
+// app.use(morgan(':json',{stream:logStreams}));
 app.use(express.json());
 app.use(cookie());
-app.use(cors({
-    origin:'*'
-}));
+// app.use(cors({
+//     origin:'*'
+// }));
 //Routes mapping for blog
 app.use('/blog/api',blogRoutes);
 //Routes mapping for likes
@@ -86,7 +88,6 @@ app.get('/',(_,res)=>{
 //Socket
 io.on('connection', (socket) => {
   console.log('A user connected: ' + socket.id);
-
   socket.on('disconnect', () => {
     console.log('A user disconnected: ' + socket.id);
   });

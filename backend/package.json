@@ -4,8 +4,9 @@
   "description": "This is for blog application backend",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+  "start": "node index.js",
+  "dev": "nodemon index.js"
+},
   "author": "Sahajaddin Seikh and Wasif Kalim",
   "license": "ISC",
   "dependencies": {
@@ -21,6 +22,6 @@
     "socket.io": "^4.8.1"
   },
   "devDependencies": {
-    "nodemon": "^3.1.9"
+    "nodemon": "^3.1.11"
   }
 }
